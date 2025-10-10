@@ -1,0 +1,18 @@
+RG Poly License 
+By downloading, using, or accessing these 3D models, you agree to the following license terms. If you do not accept these terms, you are not permitted to use the models.
+
+1. Allowed Uses
+You may use the models in your personal projects.
+You may use the models in games and applications (both commercial and non-commercial).
+You may modify the models for use within your own projects and games.
+In addition to the above, users of the GameDev.tv community and forum are allowed to access, use, and share these models with each other for learning and project purposes.
+
+2. Prohibited Uses
+You may not sell the models on their own, whether original or modified.
+You may not publish, share, or redistribute the models publicly in any form outside the GameDev.tv community (including asset stores, file-sharing platforms, or forums).
+You may not use the models to create competing asset packs or libraries.
+
+3. Conditions
+The models may only be distributed as part of a finished project (e.g., a game or application), except when shared within the GameDev.tv community.
+Copyright and ownership of the models remain with the author.
+Downloading and using the models means you agree to this license.
