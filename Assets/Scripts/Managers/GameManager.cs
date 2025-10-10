@@ -37,22 +37,29 @@ public class GameManager : Singleton<GameManager>
     {
         ChangeState(GameState.MainMenu);
         timeLeft = gameTimeLimit;
+        Time.timeScale = 0f;
     }
 
     void Update()
     {
         if (CurrentState != GameState.Playing) return;
+
+
         timeLeft -= Time.deltaTime;
+        timerText.text = "Time: " + Mathf.CeilToInt(timeLeft).ToString();
         if (timeLeft <= 0)
         {
             ChangeState(GameState.GameOver);
         }
     }
+
+    [ContextMenu("Start Game")]
     public void StartGame()
     {
         timeLeft = gameTimeLimit;
         currentScore = 0;
         ChangeState(GameState.Playing);
+        Time.timeScale = 1f;
     }
 
     public void PauseGame()
@@ -97,7 +104,7 @@ public class GameManager : Singleton<GameManager>
             ChangeState(GameState.Win);
             return;
         }
-        UpdateUI();
+        UpdateScore();
     }
 
     public void ChangeState(GameState newState)
@@ -106,7 +113,7 @@ public class GameManager : Singleton<GameManager>
         // Handle state-specific logic here if needed
         Debug.Log("GameManager: Game State changed to: " + CurrentState);
         ShowPanel(CurrentState);
-        UpdateUI();
+        UpdateScore();
     }
 
     private void ShowPanel(GameState state)
@@ -119,9 +126,8 @@ public class GameManager : Singleton<GameManager>
         gameOverPanel.SetActive(state == GameState.GameOver);
     }
 
-    private void UpdateUI()
+    private void UpdateScore()
     {
-        timerText.text = "Time: " + Mathf.CeilToInt(timeLeft).ToString();
         scoreText.text = "Score: " + currentScore.ToString() + "/" + targetScore.ToString();
     }
 }

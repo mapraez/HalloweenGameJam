@@ -3,16 +3,16 @@ using UnityEngine;
 public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
 {
 
-    private static Singleton<T> _instance;
+    private static T _instance;
 
-    public static Singleton<T> Instance
+    public static T Instance
     {
         get
         {
             if (_instance == null)
             {
                 GameObject singletonObject = new GameObject();
-                _instance = singletonObject.AddComponent<Singleton<T>>();
+                _instance = singletonObject.AddComponent<T>();
                 singletonObject.name = typeof(T).Name + " (Singleton)";
             }
             return _instance;
@@ -23,7 +23,7 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
     {
         if (_instance == null)
         {
-            _instance = this;
+            _instance = this as T;
             if (_instance.transform.parent == null)
             {
                 DontDestroyOnLoad(gameObject);
