@@ -20,7 +20,6 @@ public class Bone : MonoBehaviour
     void OnTriggerEnter(Collider other)
     {
         if (!other.CompareTag("Player")) return;
-        other.GetComponent<PlayerController>().CollectBone(boneType, graveId);
         GameManager.Instance.AddScore(scoreValue);
         SoundManager.Instance.PlaySoundEffect(pickupSound);
         Destroy(gameObject);

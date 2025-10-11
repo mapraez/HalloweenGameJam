@@ -7,8 +7,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float rotationSpeed = 720f;
 
 
-    private Dictionary<int, List<BoneType>> collectedBonesByGrave = new Dictionary<int, List<BoneType>>();
-
     private Rigidbody rb;
     private Vector2 MovementInput => inputActions.Player.Move.ReadValue<Vector2>();
     private bool IsAttacking { get; set; }
@@ -55,7 +53,7 @@ public class PlayerController : MonoBehaviour
     {
         if (GameManager.Instance.CurrentState != GameState.Playing) return;
         if (IsAttacking) return;
-        // Implement attack logic here
+
         Debug.Log("Attack started");
         IsAttacking = true;
         lightWeapon.ToggleLights(true);
@@ -63,32 +61,10 @@ public class PlayerController : MonoBehaviour
     private void StopAttack()
     {
         if (!IsAttacking) return;
-        // Implement stop attack logic here
+
         Debug.Log("Attack stopped");
         IsAttacking = false;
         lightWeapon.ToggleLights(false);
     }
 
-    public void CollectBone(BoneType boneType, int graveId)
-    {
-        Debug.Log($"Collected bone of type: {boneType} from grave ID: {graveId}");
-        // Implement additional logic for collecting the bone, e.g., updating inventory
-        // Store the collected bone associated with the grave
-        if (!collectedBonesByGrave.ContainsKey(graveId))
-        {
-            collectedBonesByGrave[graveId] = new List<BoneType>();
-        }
-        collectedBonesByGrave[graveId].Add(boneType);
-    }
-
-    [ContextMenu("Print Collected Bones")]
-    private void PrintCollectedBones()
-    {
-        foreach (var entry in collectedBonesByGrave)
-        {
-            int graveId = entry.Key;
-            List<BoneType> bones = entry.Value;
-            Debug.Log($"Grave ID: {graveId}, Collected Bones: {string.Join(", ", bones)}");
-        }
-    }
 }

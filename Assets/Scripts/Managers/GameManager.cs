@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -9,7 +10,8 @@ public enum GameState
     Paused,
     Win,
     Lose,
-    GameOver
+    GameOver,
+    LevelComplete
 }
 public class GameManager : Singleton<GameManager>
 {
@@ -17,6 +19,9 @@ public class GameManager : Singleton<GameManager>
     [Header("Settings")]
     [SerializeField] private float gameTimeLimit = 180f; // in seconds
     [SerializeField] private int targetScore = 100;
+
+    public int CurrentLevel { get; set; } = 1;
+    public int GravesLeft { get; set; }
 
     [Header("References")]
     [SerializeField] private TextMeshProUGUI timerText;
@@ -35,6 +40,8 @@ public class GameManager : Singleton<GameManager>
 
     private void Start()
     {
+        Grave.OnGraveSpawned += HandleGraveSpawned;
+        Grave.OnGraveCleared += HandleGraveCleared;
         ChangeState(GameState.MainMenu);
         timeLeft = gameTimeLimit;
     }
@@ -94,7 +101,7 @@ public class GameManager : Singleton<GameManager>
         currentScore += amount;
         if (currentScore >= targetScore)
         {
-            ChangeState(GameState.Win);
+            ChangeState(GameState.LevelComplete);
             return;
         }
         UpdateScore();
@@ -132,5 +139,21 @@ public class GameManager : Singleton<GameManager>
     private void UpdateScore()
     {
         scoreText.text = "Score: " + currentScore.ToString() + "/" + targetScore.ToString();
+    }
+
+    private void HandleGraveSpawned(Grave grave)
+    {
+        GravesLeft++;
+        Debug.Log("Grave spawned. Graves left: " + GravesLeft);
+    }
+
+    private void HandleGraveCleared(Grave grave)
+    {
+        GravesLeft--;
+        Debug.Log("Grave cleared. Graves left: " + GravesLeft);
+        if (GravesLeft <= 0 && CurrentState == GameState.Playing)
+        {
+            ChangeState(GameState.Win);
+        }
     }
 }

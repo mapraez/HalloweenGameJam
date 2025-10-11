@@ -20,13 +20,12 @@ public class Enemy : MonoBehaviour
     private int currentPatrolIndex = 0;
     private NavMeshAgent agent;
 
-    float attackCooldown = 1f;
-    float lastAttackTime = -Mathf.Infinity;
-    
-    Coroutine attackCoroutine;
+    float hitCooldown = 1f;
+    Coroutine hitCoroutine;
 
-    public event Action<Enemy> OnEnemyDamaged;
-    public event Action<Enemy> OnEnemyDeath;
+    public event Action<Enemy> OnEnemyCollected;
+
+
     void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
@@ -37,8 +36,6 @@ public class Enemy : MonoBehaviour
             
         }
     }
-
-
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -69,25 +66,25 @@ public class Enemy : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
-        if (attackCoroutine != null) { return; }
+        if (hitCoroutine != null) { return; }
         StopAllCoroutines();
-        attackCoroutine = StartCoroutine(TakeDamageRoutine(damage));
+        hitCoroutine = StartCoroutine(TakeDamageRoutine(damage));
     }
 
     private IEnumerator TakeDamageRoutine(int damage)
     {
         Debug.Log("Enemy took damage: " + damage);
 
-        OnEnemyDamaged?.Invoke(this);
+        // Damage Animation could go here
         health -= damage;
         SoundManager.Instance.PlaySoundEffect(hitSound);
         if (health <= 0)
         {
             Die();
         }
-        yield return new WaitForSeconds(attackCooldown);
+        yield return new WaitForSeconds(hitCooldown);
         Debug.Log("Enemy can take damage again");
-        attackCoroutine = null;
+        hitCoroutine = null;
     }
 
 
@@ -96,7 +93,7 @@ public class Enemy : MonoBehaviour
         Debug.Log("Enemy died");
         SoundManager.Instance.PlaySoundEffect(deathSound);
         DropBones();
-        OnEnemyDeath?.Invoke(this);
+        OnEnemyCollected?.Invoke(this);
         Destroy(gameObject);
     }
 
