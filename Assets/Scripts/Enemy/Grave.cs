@@ -19,7 +19,7 @@ public class Grave : MonoBehaviour
     {
         if (mySkeleton != null) return;
         mySkeleton = Instantiate(enemyPrefab, transform.position + Vector3.up * 0.5f, Quaternion.identity);
-        mySkeleton.SetGrave(this);
+        mySkeleton.SetGrave(graveId);
     }
 
 }

@@ -15,14 +15,17 @@ public class MainMenuPanel : MonoBehaviour
         
     }
 
-    private void OnExitGameButtonClicked()
-    {
-        Application.Quit();
-    }
-
     // Update is called once per frame
     void Update()
     {
-        
+
     }
+    
+    
+    private void OnExitGameButtonClicked()
+    {
+        Debug.Log("Exit Game button clicked");
+        Application.Quit();
+    }
+
 }

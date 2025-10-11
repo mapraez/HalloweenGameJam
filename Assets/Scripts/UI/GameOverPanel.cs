@@ -25,6 +25,7 @@ public class GameOverPanel : MonoBehaviour
     
     private void OnExitGameButtonClicked()
     {
+        Debug.Log("Exit Game button clicked");
         Application.Quit();
     }
 }

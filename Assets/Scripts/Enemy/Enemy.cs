@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -8,8 +9,7 @@ public class Enemy : MonoBehaviour
     [Header("Enemy Settings")]
     [SerializeField] private int health = 100;
     [SerializeField] private Bone bonePrefab;
-    private Grave MyGrave { get; set; }
-
+    private int graveId;
 
 
     [Header("Enemy References")]
@@ -20,13 +20,26 @@ public class Enemy : MonoBehaviour
     private int currentPatrolIndex = 0;
     private NavMeshAgent agent;
 
+    float attackCooldown = 1f;
+    float lastAttackTime = -Mathf.Infinity;
+    
+    Coroutine attackCoroutine;
 
     public event Action<Enemy> OnEnemyDamaged;
     public event Action<Enemy> OnEnemyDeath;
     void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
+        if (patrolPoints.Length == 0)
+        {
+            Debug.LogWarning("No patrol points assigned to enemy: " + name);
+            patrolPoints = new Transform[0];
+            
+        }
     }
+
+
+    
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -39,6 +52,8 @@ public class Enemy : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+        if (patrolPoints.Length == 0) return;
         if (agent.remainingDistance < 0.5f)
         {
             currentPatrolIndex = (currentPatrolIndex + 1) % patrolPoints.Length;
@@ -47,24 +62,38 @@ public class Enemy : MonoBehaviour
 
     }
 
-    public void SetGrave(Grave grave)
+    public void SetGrave(int graveId)
     {
-        MyGrave = grave;
+        this.graveId = graveId;
     }
 
     public void TakeDamage(int damage)
     {
+        if (attackCoroutine != null) { return; }
+        StopAllCoroutines();
+        attackCoroutine = StartCoroutine(TakeDamageRoutine(damage));
+    }
+
+    private IEnumerator TakeDamageRoutine(int damage)
+    {
+        Debug.Log("Enemy took damage: " + damage);
+
+        OnEnemyDamaged?.Invoke(this);
         health -= damage;
         SoundManager.Instance.PlaySoundEffect(hitSound);
         if (health <= 0)
         {
             Die();
         }
+        yield return new WaitForSeconds(attackCooldown);
+        Debug.Log("Enemy can take damage again");
+        attackCoroutine = null;
     }
 
 
     private void Die()
     {
+        Debug.Log("Enemy died");
         SoundManager.Instance.PlaySoundEffect(deathSound);
         DropBones();
         OnEnemyDeath?.Invoke(this);
@@ -79,7 +108,7 @@ public class Enemy : MonoBehaviour
         {
             Bone newBone = Instantiate(bonePrefab, transform.position, Quaternion.identity);
             newBone.SetBoneType(BoneType.FullSkeleton);
-            newBone.SetGrave(MyGrave);
+            newBone.SetGraveId(graveId);
         }
 
     }

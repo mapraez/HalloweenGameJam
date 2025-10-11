@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class LightWeapon : MonoBehaviour
@@ -8,7 +9,6 @@ public class LightWeapon : MonoBehaviour
 
     private bool isAttacking = false;
 
-    private Enemy[] enemiesInRange;
 
     void Awake()
     {
@@ -38,18 +38,44 @@ public class LightWeapon : MonoBehaviour
             light.enabled = state;
         }
     }
-    
+
     private void HandleLightAttack()
     {
         if (!isAttacking) return;
-        RaycastHit[] hits = Physics.RaycastAll(transform.position, transform.forward, range, Physics.AllLayers, QueryTriggerInteraction.Ignore);
-        foreach (RaycastHit hit in hits)
+
+        List<Enemy> hitEnemies = new List<Enemy>();
+
+        foreach (Light light in lights)
         {
-            Enemy enemy = hit.collider.GetComponent<Enemy>();
-            if (enemy != null)
+            RaycastHit[] hits = Physics.RaycastAll(light.transform.position, light.transform.forward, range, Physics.AllLayers, QueryTriggerInteraction.Ignore);
+            foreach (RaycastHit hit in hits)
             {
-                enemy.TakeDamage(damage);
+                Enemy enemy = hit.collider.GetComponent<Enemy>();
+                if (enemy != null && !hitEnemies.Contains(enemy))
+                {
+                    // Debug.Log("Light: " + light.name + " Raycast hitting enemy: " + enemy.name);
+                    hitEnemies.Add(enemy);
+                }
+                
             }
         }
+
+        foreach (Enemy enemy in hitEnemies)
+        {
+            enemy.TakeDamage(damage);
+        }
+
+
+        
+    }
+
+    void OnDrawGizmosSelected()
+    {
+        foreach (Light light in lights)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawRay(light.transform.position, light.transform.forward * range);
+        }
+        
     }
 }
