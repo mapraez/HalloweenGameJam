@@ -52,6 +52,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7646339788023701036, guid: 8649148c1d1aa0644a8c895155036c5f, type: 3}
+      propertyPath: hitSound
+      value: 
+      objectReference: {fileID: 8300000, guid: 2c3fe07d5e67e9242b5f5b642ccdf180, type: 3}
     - target: {fileID: 9081702450800466475, guid: 8649148c1d1aa0644a8c895155036c5f, type: 3}
       propertyPath: m_Name
       value: Pumpkin

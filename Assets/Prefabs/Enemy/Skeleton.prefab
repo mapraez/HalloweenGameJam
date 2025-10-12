@@ -9,9 +9,33 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 3044766229445825001, guid: f7498344e9bacf744afc248efc72391a, type: 3}
+      propertyPath: hitSound
+      value: 
+      objectReference: {fileID: 8300000, guid: 6a17802cca92bfe4d8ec76fb3c74aa71, type: 3}
+    - target: {fileID: 3044766229445825001, guid: f7498344e9bacf744afc248efc72391a, type: 3}
       propertyPath: bonePrefab
       value: 
       objectReference: {fileID: 5781595925183458169, guid: 5599c49c58a3ac346a13900468f8256a, type: 3}
+    - target: {fileID: 3044766229445825001, guid: f7498344e9bacf744afc248efc72391a, type: 3}
+      propertyPath: deathSound
+      value: 
+      objectReference: {fileID: 8300000, guid: 2db9fe3c552c79d41a0f64b69d8a6913, type: 3}
+    - target: {fileID: 3044766229445825001, guid: f7498344e9bacf744afc248efc72391a, type: 3}
+      propertyPath: hitSounds.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3044766229445825001, guid: f7498344e9bacf744afc248efc72391a, type: 3}
+      propertyPath: 'hitSounds.Array.data[0]'
+      value: 
+      objectReference: {fileID: 8300000, guid: 6a17802cca92bfe4d8ec76fb3c74aa71, type: 3}
+    - target: {fileID: 3044766229445825001, guid: f7498344e9bacf744afc248efc72391a, type: 3}
+      propertyPath: 'hitSounds.Array.data[1]'
+      value: 
+      objectReference: {fileID: 8300000, guid: f686f1ce06aef1f42bfdf0ca2a779c0f, type: 3}
+    - target: {fileID: 3044766229445825001, guid: f7498344e9bacf744afc248efc72391a, type: 3}
+      propertyPath: 'hitSounds.Array.data[2]'
+      value: 
+      objectReference: {fileID: 8300000, guid: 2acb91bd880d06143a6e04983c2283af, type: 3}
     - target: {fileID: 4411728227564083568, guid: f7498344e9bacf744afc248efc72391a, type: 3}
       propertyPath: m_Name
       value: Skeleton

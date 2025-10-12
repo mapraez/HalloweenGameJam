@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
+using Random = UnityEngine.Random;
 
 public class Enemy : MonoBehaviour
 {
@@ -15,7 +16,7 @@ public class Enemy : MonoBehaviour
 
     [Header("Enemy References")]
 
-    [SerializeField] private AudioClip hitSound;
+    [SerializeField] private AudioClip[] hitSounds;
     [SerializeField] private AudioClip deathSound;
     private int currentPatrolIndex = 0;
 
@@ -95,7 +96,7 @@ public class Enemy : MonoBehaviour
 
         // Damage Animation could go here
         currentHealth -= damage;
-        SoundManager.Instance.PlaySoundEffect(hitSound);
+        SoundManager.Instance.PlaySoundEffect(hitSounds[Random.Range(0, hitSounds.Length)]);
         characterDisplay.UpdateHealthBar((float)currentHealth / maxHealth);
         if (currentHealth <= 0)
         {
