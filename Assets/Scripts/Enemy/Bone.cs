@@ -20,6 +20,7 @@ public class Bone : MonoBehaviour
     void OnTriggerEnter(Collider other)
     {
         if (!other.CompareTag("Player")) return;
+        Debug.Log("Bone: Player picked up bone of type " + boneType + " from grave ID " + graveId);
         GameManager.Instance.AddScore(scoreValue);
         SoundManager.Instance.PlaySoundEffect(pickupSound);
         Destroy(gameObject);

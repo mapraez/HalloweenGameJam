@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -20,28 +19,27 @@ public class GameManager : Singleton<GameManager>
     [SerializeField] private float gameTimeLimit = 180f; // in seconds
     [SerializeField] private int targetScore = 100;
 
-    public int CurrentLevel { get; set; } = 1;
-    public int GravesLeft { get; set; }
+    [SerializeField] public int CurrentLevel { get; set; } = 1;
+    [SerializeField] public int GravesLeft { get; set; } = 0;
 
-    [Header("References")]
-    [SerializeField] private TextMeshProUGUI timerText;
-    [SerializeField] private TextMeshProUGUI scoreText;
-    [SerializeField] private GameObject menuPanel;
-    [SerializeField] private GameObject gamePanel;
-    [SerializeField] private GameObject pausePanel;
-    [SerializeField] private GameObject winPanel;
-    [SerializeField] private GameObject losePanel;
-    [SerializeField] private GameObject gameOverPanel;
+
 
 
     private float timeLeft;
     private int currentScore = 0;
 
 
-    private void Start()
+    override protected void Awake()
     {
+        base.Awake();
         Grave.OnGraveSpawned += HandleGraveSpawned;
         Grave.OnGraveCleared += HandleGraveCleared;
+    }
+
+
+    private void Start()
+    {
+        Debug.Log("GameManager: Starting in MainMenu state");
         ChangeState(GameState.MainMenu);
         timeLeft = gameTimeLimit;
     }
@@ -50,18 +48,22 @@ public class GameManager : Singleton<GameManager>
     {
         if (CurrentState != GameState.Playing) return;
 
-
         timeLeft -= Time.deltaTime;
-        timerText.text = "Time: " + Mathf.CeilToInt(timeLeft).ToString();
+
         if (timeLeft <= 0)
         {
             ChangeState(GameState.GameOver);
+        }
+        else
+        {
+            UIManager.Instance.UpdateTimer(timeLeft);
         }
     }
 
     [ContextMenu("Start Game")]
     public void StartGame()
     {
+        Debug.Log("GameManager: Starting Game");
         timeLeft = gameTimeLimit;
         currentScore = 0;
         ChangeState(GameState.Playing);
@@ -104,7 +106,7 @@ public class GameManager : Singleton<GameManager>
             ChangeState(GameState.LevelComplete);
             return;
         }
-        UpdateScore();
+        UIManager.Instance.UpdateScore(currentScore, targetScore);
     }
 
     public void ChangeState(GameState newState)
@@ -122,24 +124,12 @@ public class GameManager : Singleton<GameManager>
                 break;
         }
 
-        ShowPanel(CurrentState);
-        UpdateScore();
+        UIManager.Instance.ShowPanel(CurrentState);
+        UIManager.Instance.UpdateScore(currentScore, targetScore);
     }
 
-    private void ShowPanel(GameState state)
-    {
-        menuPanel.SetActive(state == GameState.MainMenu);
-        gamePanel.SetActive(state == GameState.Playing);
-        pausePanel.SetActive(state == GameState.Paused);
-        winPanel.SetActive(state == GameState.Win);
-        losePanel.SetActive(state == GameState.Lose);
-        gameOverPanel.SetActive(state == GameState.GameOver);
-    }
+    
 
-    private void UpdateScore()
-    {
-        scoreText.text = "Score: " + currentScore.ToString() + "/" + targetScore.ToString();
-    }
 
     private void HandleGraveSpawned(Grave grave)
     {

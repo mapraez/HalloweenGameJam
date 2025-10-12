@@ -3,10 +3,12 @@ using UnityEngine.UI;
 
 public class MainMenuPanel : MonoBehaviour
 {
+    [SerializeField] private Button StartButton;
     [SerializeField] private Button ExitButton;
 
     void Awake()
     {
+        StartButton.onClick.AddListener(OnStartGameButtonClicked);
         ExitButton.onClick.AddListener(OnExitGameButtonClicked);
     }
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -21,6 +23,11 @@ public class MainMenuPanel : MonoBehaviour
 
     }
     
+    private void OnStartGameButtonClicked()
+    {
+        Debug.Log("Start Game button clicked");
+        GameManager.Instance.StartGame();
+    }
     
     private void OnExitGameButtonClicked()
     {

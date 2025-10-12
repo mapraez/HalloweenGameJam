@@ -7,7 +7,8 @@ public class Enemy : MonoBehaviour
 {
 
     [Header("Enemy Settings")]
-    [SerializeField] private int health = 100;
+    [SerializeField] private int maxHealth = 100;
+    private int currentHealth;
     [SerializeField] private Bone bonePrefab;
     private int graveId;
 
@@ -16,9 +17,13 @@ public class Enemy : MonoBehaviour
 
     [SerializeField] private AudioClip hitSound;
     [SerializeField] private AudioClip deathSound;
-    [SerializeField] private Transform[] patrolPoints;
     private int currentPatrolIndex = 0;
+
+    [Header("UI References")]
+    [SerializeField] private CharacterDisplay characterDisplay;
+
     private NavMeshAgent agent;
+    private Transform[] patrolPoints = new Transform[0];
 
     float hitCooldown = 1f;
     Coroutine hitCoroutine;
@@ -28,6 +33,7 @@ public class Enemy : MonoBehaviour
 
     void Awake()
     {
+        characterDisplay = GetComponentInChildren<CharacterDisplay>();
         agent = GetComponent<NavMeshAgent>();
         if (patrolPoints.Length == 0)
         {
@@ -44,6 +50,8 @@ public class Enemy : MonoBehaviour
         {
             agent.SetDestination(patrolPoints[currentPatrolIndex].position);
         }
+        currentHealth = maxHealth;
+        characterDisplay.UpdateHealthBar(1f);
     }
 
     // Update is called once per frame
@@ -64,6 +72,16 @@ public class Enemy : MonoBehaviour
         this.graveId = graveId;
     }
 
+    public void SetPatrolPoints(Transform[] points)
+    {
+        patrolPoints = points;
+        if (patrolPoints.Length > 0 && agent != null)
+        {
+            currentPatrolIndex = 0;
+            agent.SetDestination(patrolPoints[currentPatrolIndex].position);
+        }
+    }
+
     public void TakeDamage(int damage)
     {
         if (hitCoroutine != null) { return; }
@@ -76,10 +94,12 @@ public class Enemy : MonoBehaviour
         Debug.Log("Enemy took damage: " + damage);
 
         // Damage Animation could go here
-        health -= damage;
+        currentHealth -= damage;
         SoundManager.Instance.PlaySoundEffect(hitSound);
-        if (health <= 0)
+        characterDisplay.UpdateHealthBar((float)currentHealth / maxHealth);
+        if (currentHealth <= 0)
         {
+            currentHealth = 0;
             Die();
         }
         yield return new WaitForSeconds(hitCooldown);
@@ -104,7 +124,6 @@ public class Enemy : MonoBehaviour
         if (bonePrefab != null)
         {
             Bone newBone = Instantiate(bonePrefab, transform.position, Quaternion.identity);
-            newBone.SetBoneType(BoneType.FullSkeleton);
             newBone.SetGraveId(graveId);
         }
 
@@ -120,6 +139,6 @@ public class Enemy : MonoBehaviour
     [ContextMenu("Kill Enemy")]
     private void KillEnemy()
     {
-        TakeDamage(health);
+        TakeDamage(maxHealth);
     }
 }

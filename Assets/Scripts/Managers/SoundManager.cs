@@ -4,7 +4,14 @@ public class SoundManager : Singleton<SoundManager>
 {
     [SerializeField] private AudioSource backgroundMusicSource;
     [SerializeField] private AudioSource soundeffectSource;
-   
+
+
+    protected override void Awake()
+    {
+        base.Awake();
+    }
+
+    
     public void PlaySoundEffect(AudioClip clip)
     {
         if (clip == null)

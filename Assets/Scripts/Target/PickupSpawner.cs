@@ -7,7 +7,6 @@ public class PickupSpawner : MonoBehaviour
     [SerializeField] private PickupItem[] itemPrefabs;
     [SerializeField] private float spawnInterval = 2f;
 
-
     [SerializeField] private Transform[] spawnPoints;
 
 
@@ -61,5 +60,21 @@ public class PickupSpawner : MonoBehaviour
     public void StopSpawning()
     {
         StopAllCoroutines();
+    }
+
+
+    void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(transform.position, 0.5f);
+
+        Gizmos.color = Color.yellow;
+        foreach (var point in spawnPoints)
+        {
+            if (point != null)
+            {
+                Gizmos.DrawSphere(point.position, 0.3f);
+            }
+        }
     }
 }

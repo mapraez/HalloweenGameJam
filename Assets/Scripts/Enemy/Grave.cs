@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using Unity.Mathematics;
 using UnityEngine;
 
 public class Grave : MonoBehaviour
@@ -9,9 +11,16 @@ public class Grave : MonoBehaviour
     public int GraveId => graveId; // Public property to access the ID
 
     [SerializeField] private Enemy enemyPrefab;
+    [SerializeField] private Transform spawnPoint;
+    [SerializeField] private Transform[] patrolPoints;
+
+
     private Enemy mySkeleton;
     public static event Action<Grave> OnGraveSpawned;
     public static event Action<Grave> OnGraveCleared;
+
+    [SerializeField] GameObject clearedEnemyObject;
+    [SerializeField] GameObject closedGraveObject;
 
     void Awake()
     {
@@ -30,6 +39,7 @@ public class Grave : MonoBehaviour
     void Start()
     {
         OnGraveSpawned?.Invoke(this);
+        Invoke("SpawnEnemy", 2f); // Delay spawn for demonstration
     }
 
 
@@ -37,8 +47,10 @@ public class Grave : MonoBehaviour
     public void SpawnEnemy()
     {
         if (mySkeleton != null) return;
-        mySkeleton = Instantiate(enemyPrefab, transform.position + Vector3.up * 0.5f, Quaternion.identity);
+        Transform spawnPoint = this.spawnPoint != null ? this.spawnPoint : transform;
+        mySkeleton = Instantiate(enemyPrefab, spawnPoint.position + Vector3.up * 0.5f, Quaternion.identity);
         mySkeleton.SetGrave(graveId);
+        mySkeleton.SetPatrolPoints(patrolPoints);
         mySkeleton.OnEnemyCollected += HandleEnemyCollected;
     }
 
@@ -58,8 +70,32 @@ public class Grave : MonoBehaviour
             mySkeleton.OnEnemyCollected -= HandleEnemyCollected;
             Destroy(mySkeleton.gameObject);
             mySkeleton = null;
-            OnGraveCleared?.Invoke(this);
+            StartCoroutine(CloseGraveRoutine());
         }
+
+    }
+
+    IEnumerator CloseGraveRoutine()
+    {
+        Debug.Log("Grave: Closing grave " + graveId);
+
+        yield return new WaitForSeconds(0.5f);
+        clearedEnemyObject.SetActive(true);
+        yield return new WaitForSeconds(1f);
+        closedGraveObject.SetActive(true);
+
+        while (closedGraveObject.transform.localPosition.x > 0f)
+        {
+            closedGraveObject.transform.localPosition += Vector3.left * Time.deltaTime;
+            yield return null;
+        }
+        while (closedGraveObject.transform.localPosition.y > .6f)
+        {
+            closedGraveObject.transform.localPosition += Vector3.down * Time.deltaTime;
+            yield return null;
+        }
+        OnGraveCleared?.Invoke(this);
+
     }
 
     // Utility methods for managing grave IDs

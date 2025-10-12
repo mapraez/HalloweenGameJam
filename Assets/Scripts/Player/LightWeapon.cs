@@ -53,7 +53,7 @@ public class LightWeapon : MonoBehaviour
                 Enemy enemy = hit.collider.GetComponent<Enemy>();
                 if (enemy != null && !hitEnemies.Contains(enemy))
                 {
-                    // Debug.Log("Light: " + light.name + " Raycast hitting enemy: " + enemy.name);
+                    Debug.Log("Light: " + light.name + " Raycast hitting enemy: " + enemy.name);
                     hitEnemies.Add(enemy);
                 }
                 
