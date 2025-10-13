@@ -33,7 +33,8 @@ public class Enemy : MonoBehaviour
     float hitCooldown = 1f;
 
 
-    Coroutine currentActiveRoutine;
+    Coroutine currentDamageRouting;
+    Coroutine currentPatrolRoutine;
 
     public event Action<Enemy> OnEnemyCollected;
 
@@ -51,7 +52,7 @@ public class Enemy : MonoBehaviour
     {
         characterDisplay.UpdateHealthBar(1f);
         SetPatrolPoints();
-        currentActiveRoutine = StartCoroutine(StartPatrollingRoutine());
+        currentPatrolRoutine = StartCoroutine(StartPatrollingRoutine());
     }
 
     // Update is called once per frame
@@ -114,8 +115,13 @@ public class Enemy : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
+        if (currentDamageRouting != null)
+        {
+            // Debug.Log("Enemy is already taking damage, ignoring new damage");
+            return;
+        }
         StopAllCoroutines();
-        currentActiveRoutine = StartCoroutine(TakeDamageRoutine(damage));
+        currentDamageRouting = StartCoroutine(TakeDamageRoutine(damage));
     }
 
     private IEnumerator TakeDamageRoutine(int damage)
@@ -133,9 +139,13 @@ public class Enemy : MonoBehaviour
             currentHealth = 0;
             Die();
         }
+
+        currentPatrolRoutine = StartCoroutine(StartPatrollingRoutine());
+
         yield return new WaitForSeconds(hitCooldown);
+        currentDamageRouting = null;
+
         Debug.Log("Enemy can take damage again");
-        currentActiveRoutine = null;
     }
 
 

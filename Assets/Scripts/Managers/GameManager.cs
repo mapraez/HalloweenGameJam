@@ -44,7 +44,7 @@ public class GameManager : Singleton<GameManager>
     {
         Debug.Log("GameManager: Starting in MainMenu state");
         ChangeState(GameState.MainMenu);
-        timeLeft = gameTimeLimit;
+        currentScore = 0;
     }
 
     void Update()
@@ -63,13 +63,12 @@ public class GameManager : Singleton<GameManager>
         }
     }
 
-    [ContextMenu("Start Game")]
-    public void StartGame()
+    [ContextMenu("Begin Level")]
+    public void BeginLevel()
     {
-        Debug.Log("GameManager: Starting Game");
-        timeLeft = gameTimeLimit;
-        currentScore = 0;
+        Debug.Log("GameManager: Starting Level " + CurrentLevel);
         ChangeState(GameState.Playing);
+        timeLeft = gameTimeLimit;
     }
 
     public void TogglePause()
@@ -83,6 +82,25 @@ public class GameManager : Singleton<GameManager>
             ChangeState(GameState.Playing);
         }
     }
+    
+    public void LoadNextLevel()
+    {
+        int nextLevelIndex = CurrentLevel + 1;
+        if (nextLevelIndex >= SceneManager.sceneCountInBuildSettings)
+        {
+            Debug.Log("GameManager: No more levels to load. You win the game!");
+            WinGame();
+            return;
+        }
+        LoadLevel(nextLevelIndex);
+
+    }
+
+    public void WinGame()
+    {
+        Debug.Log("GameManager: You Win!");
+        ChangeState(GameState.Win);
+    }
 
     public void EndGame()
     {
@@ -90,9 +108,22 @@ public class GameManager : Singleton<GameManager>
         ChangeState(GameState.GameOver);
     }
 
-    public void RestartGame()
+    public void RestartCurrentLevel()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    public void LoadLevel(int levelIndex)
+    {
+        if (levelIndex < 0 || levelIndex >= SceneManager.sceneCountInBuildSettings)
+        {
+            Debug.LogError("GameManager: Invalid level index: " + levelIndex);
+            return;
+        }
+        CurrentLevel = levelIndex;
+        SceneManager.LoadScene(levelIndex);
+        ChangeState(GameState.MainMenu);
+
     }
 
     public void QuitToMenu()
@@ -153,7 +184,7 @@ public class GameManager : Singleton<GameManager>
         Debug.Log("Grave cleared. Graves left: " + GravesLeft);
         if (GravesLeft <= 0 && CurrentState == GameState.Playing)
         {
-            ChangeState(GameState.Win);
+            ChangeState(GameState.LevelComplete);
         }
     }
 }

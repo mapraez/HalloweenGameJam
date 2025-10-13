@@ -10,6 +10,7 @@ public class UIManager : Singleton<UIManager>
     [SerializeField] private GameObject menuPanel;
     [SerializeField] private GameObject gamePanel;
     [SerializeField] private GameObject pausePanel;
+    [SerializeField] private GameObject levelCompletePanel;
     [SerializeField] private GameObject winPanel;
     [SerializeField] private GameObject losePanel;
     [SerializeField] private GameObject gameOverPanel;
@@ -24,6 +25,7 @@ public class UIManager : Singleton<UIManager>
         menuPanel.SetActive(state == GameState.MainMenu);
         gamePanel.SetActive(state == GameState.Playing);
         pausePanel.SetActive(state == GameState.Paused);
+        levelCompletePanel.SetActive(state == GameState.LevelComplete);
         winPanel.SetActive(state == GameState.Win);
         losePanel.SetActive(state == GameState.Lose);
         gameOverPanel.SetActive(state == GameState.GameOver);
@@ -42,7 +44,12 @@ public class UIManager : Singleton<UIManager>
 
     public void CallStartGame()
     {
-        GameManager.Instance.StartGame();
+        GameManager.Instance.BeginLevel();
+    }
+
+    public void CallNextLevel()
+    {
+        GameManager.Instance.LoadNextLevel();
     }
 
     public void CallQuitToMenu()

@@ -6,6 +6,8 @@ public class StaticLocationManager : Singleton<StaticLocationManager>
     [SerializeField] private Transform[] spawnPoints;
     [SerializeField] private Transform[] patrolPoints;
 
+    [SerializeField] private Transform playerSpawnPoint;
+
 
     override protected void Awake()
     {
@@ -108,5 +110,10 @@ public class StaticLocationManager : Singleton<StaticLocationManager>
                 }
             }
         }
+    }
+
+    public Transform GetPlayerSpawnPoint()
+    {
+        return playerSpawnPoint;
     }
 }

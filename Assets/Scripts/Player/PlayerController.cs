@@ -1,7 +1,7 @@
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : Singleton<PlayerController>
 {
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float rotationSpeed = 720f;
@@ -13,8 +13,9 @@ public class PlayerController : MonoBehaviour
     private LightWeapon lightWeapon;
 
     InputSystem_Actions inputActions;
-    private void Awake()
+    override protected void Awake()
     {
+        base.Awake();
         rb = GetComponent<Rigidbody>();
         lightWeapon = GetComponentInChildren<LightWeapon>();
         inputActions = new InputSystem_Actions();
@@ -22,6 +23,12 @@ public class PlayerController : MonoBehaviour
         inputActions.Player.Attack.performed += ctx => Attack();
         inputActions.Player.Attack.canceled += ctx => StopAttack();
         inputActions.Player.Pause.performed += ctx => GameManager.Instance.TogglePause();
+    }
+
+    void Start()
+    {
+        SceneManager.sceneLoaded += HandleOnSceneLoaded;
+        HandleOnSceneLoaded(SceneManager.GetActiveScene(), LoadSceneMode.Single);
     }
 
     private void Update()
@@ -66,6 +73,33 @@ public class PlayerController : MonoBehaviour
         Debug.Log("Attack stopped");
         IsAttacking = false;
         lightWeapon.ToggleLights(false);
+    }
+
+    private void HandleOnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        Transform spawnPoint = StaticLocationManager.Instance.GetPlayerSpawnPoint();
+        if (spawnPoint != null)
+        {
+            transform.position = spawnPoint.position;
+            transform.rotation = spawnPoint.rotation;
+        }
+        else
+        {
+            Debug.LogWarning("PlayerController: No spawn point found for player.");
+            transform.position = Vector3.zero;
+            transform.rotation = Quaternion.identity;
+        }
+    }
+
+
+    void OnDestroy()
+    {
+        lightWeapon.ToggleLights(false);
+        inputActions.Player.Attack.performed -= ctx => Attack();
+        inputActions.Player.Attack.canceled -= ctx => StopAttack();
+        inputActions.Player.Disable();
+        inputActions.Dispose();
+        SceneManager.sceneLoaded -= HandleOnSceneLoaded;
     }
 
 }
