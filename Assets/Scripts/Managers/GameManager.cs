@@ -12,6 +12,9 @@ public enum GameState
     GameOver,
     LevelComplete
 }
+
+
+
 public class GameManager : Singleton<GameManager>
 {
     public GameState CurrentState { get; private set; } = GameState.MainMenu;
@@ -69,7 +72,7 @@ public class GameManager : Singleton<GameManager>
         ChangeState(GameState.Playing);
     }
 
-    public void PauseGame()
+    public void TogglePause()
     {
         if (CurrentState == GameState.Playing)
         {
@@ -95,6 +98,13 @@ public class GameManager : Singleton<GameManager>
     public void QuitToMenu()
     {
         ChangeState(GameState.MainMenu);
+        // SceneManager.LoadScene("MainMenu");
+    }
+
+    public void ExitGame()
+    {
+        Debug.Log("GameManager: Exiting Game");
+        Application.Quit();
     }
 
 
@@ -128,7 +138,7 @@ public class GameManager : Singleton<GameManager>
         UIManager.Instance.UpdateScore(currentScore, targetScore);
     }
 
-    
+
 
 
     private void HandleGraveSpawned(Grave grave)

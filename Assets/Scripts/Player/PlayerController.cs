@@ -21,6 +21,7 @@ public class PlayerController : MonoBehaviour
         inputActions.Player.Enable();
         inputActions.Player.Attack.performed += ctx => Attack();
         inputActions.Player.Attack.canceled += ctx => StopAttack();
+        inputActions.Player.Pause.performed += ctx => GameManager.Instance.TogglePause();
     }
 
     private void Update()

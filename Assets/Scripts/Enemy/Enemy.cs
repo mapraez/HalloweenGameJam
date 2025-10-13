@@ -13,21 +13,27 @@ public class Enemy : MonoBehaviour
     [SerializeField] private Bone bonePrefab;
     private int graveId;
 
+    [SerializeField] float patrolSpeed = 2f;
+    [SerializeField] float patrolWaitTime = 2f;
 
     [Header("Enemy References")]
 
     [SerializeField] private AudioClip[] hitSounds;
     [SerializeField] private AudioClip deathSound;
-    private int currentPatrolIndex = 0;
+    private int currentPatrolIndex;
+    private int nextPatrolIndex;
 
     [Header("UI References")]
     [SerializeField] private CharacterDisplay characterDisplay;
 
     private NavMeshAgent agent;
-    private Transform[] patrolPoints = new Transform[0];
+    private Transform[] patrolPoints;
+
 
     float hitCooldown = 1f;
-    Coroutine hitCoroutine;
+
+
+    Coroutine currentActiveRoutine;
 
     public event Action<Enemy> OnEnemyCollected;
 
@@ -36,35 +42,22 @@ public class Enemy : MonoBehaviour
     {
         characterDisplay = GetComponentInChildren<CharacterDisplay>();
         agent = GetComponent<NavMeshAgent>();
-        if (patrolPoints.Length == 0)
-        {
-            Debug.LogWarning("No patrol points assigned to enemy: " + name);
-            patrolPoints = new Transform[0];
-            
-        }
+        currentHealth = maxHealth;
+        
     }
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        if (patrolPoints.Length > 0)
-        {
-            agent.SetDestination(patrolPoints[currentPatrolIndex].position);
-        }
-        currentHealth = maxHealth;
         characterDisplay.UpdateHealthBar(1f);
+        SetPatrolPoints();
+        currentActiveRoutine = StartCoroutine(StartPatrollingRoutine());
     }
 
     // Update is called once per frame
     void Update()
     {
 
-        if (patrolPoints.Length == 0) return;
-        if (agent.remainingDistance < 0.5f)
-        {
-            currentPatrolIndex = (currentPatrolIndex + 1) % patrolPoints.Length;
-            agent.SetDestination(patrolPoints[currentPatrolIndex].position);
-        }
 
     }
 
@@ -73,30 +66,67 @@ public class Enemy : MonoBehaviour
         this.graveId = graveId;
     }
 
-    public void SetPatrolPoints(Transform[] points)
+    public IEnumerator StartPatrollingRoutine()
     {
-        patrolPoints = points;
+        agent.speed = patrolSpeed;
+        yield return new WaitForSeconds(patrolWaitTime);
+
         if (patrolPoints.Length > 0 && agent != null)
         {
-            currentPatrolIndex = 0;
-            agent.SetDestination(patrolPoints[currentPatrolIndex].position);
+            while (true)
+            {
+                agent.SetDestination(patrolPoints[currentPatrolIndex].position);
+
+                nextPatrolIndex = currentPatrolIndex + 1;
+                if (nextPatrolIndex >= patrolPoints.Length)
+                {
+                    nextPatrolIndex = 0;
+                }
+                currentPatrolIndex = nextPatrolIndex;
+                
+                yield return new WaitUntil(() => !agent.pathPending && agent.remainingDistance <= agent.stoppingDistance);
+                yield return new WaitForSeconds(patrolWaitTime);
+            }
         }
+    }
+
+    private void SetPatrolPoints()
+    {
+        Transform[] points = StaticLocationManager.Instance.GetPatrolPoints();
+        patrolPoints = points;
+
+        Debug.Log("Enemy: CurrentLocation: " + transform.position);
+
+        float closestDistance = Mathf.Infinity;
+        for (int i = 0; i < patrolPoints.Length; i++)
+        {
+            float distance = Vector3.Distance(transform.position, patrolPoints[i].position);
+            Debug.Log("Distance to patrol point " + i + ": " + distance);
+            if (distance < closestDistance)
+            {
+                closestDistance = distance;
+                currentPatrolIndex = i;
+            }
+        }
+        Debug.Log("Enemy: Closest patrol point index: " + currentPatrolIndex);
+        
     }
 
     public void TakeDamage(int damage)
     {
-        if (hitCoroutine != null) { return; }
         StopAllCoroutines();
-        hitCoroutine = StartCoroutine(TakeDamageRoutine(damage));
+        currentActiveRoutine = StartCoroutine(TakeDamageRoutine(damage));
     }
 
     private IEnumerator TakeDamageRoutine(int damage)
     {
         Debug.Log("Enemy took damage: " + damage);
 
-        // Damage Animation could go here
         currentHealth -= damage;
         SoundManager.Instance.PlaySoundEffect(hitSounds[Random.Range(0, hitSounds.Length)]);
+
+        // Damage Animation could go here
+
         characterDisplay.UpdateHealthBar((float)currentHealth / maxHealth);
         if (currentHealth <= 0)
         {
@@ -105,7 +135,7 @@ public class Enemy : MonoBehaviour
         }
         yield return new WaitForSeconds(hitCooldown);
         Debug.Log("Enemy can take damage again");
-        hitCoroutine = null;
+        currentActiveRoutine = null;
     }
 
 

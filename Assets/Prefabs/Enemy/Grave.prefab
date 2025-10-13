@@ -45,12 +45,14 @@ GameObject:
   m_Component:
   - component: {fileID: 594705033725258568}
   - component: {fileID: 8428444094197147809}
+  - component: {fileID: 6071001458119641250}
+  - component: {fileID: 2959960735876079653}
   m_Layer: 0
   m_Name: Grave
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 2147483647
+  m_StaticEditorFlags: 0
   m_IsActive: 1
 --- !u!4 &594705033725258568
 Transform:
@@ -86,14 +88,45 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Grave
   graveId: 0
   enemyPrefab: {fileID: 2733812617970955119, guid: b3110109979077d49b77bbabf243bd25, type: 3}
-  spawnPoint: {fileID: 2799810783292365302}
-  patrolPoints:
-  - {fileID: 4421086259194367464}
-  - {fileID: 3674688005067808191}
-  - {fileID: 2424211704312983389}
-  - {fileID: 9050712553325825652}
   clearedEnemyObject: {fileID: 2138198474465745001}
   closedGraveObject: {fileID: 9027890752647816394}
+--- !u!65 &6071001458119641250
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2320397967082019651}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2, y: 1, z: 1}
+  m_Center: {x: 0, y: 0.5, z: 0}
+--- !u!208 &2959960735876079653
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2320397967082019651}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.6, y: 0.5, z: 0.25}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0}
+  m_TimeToStationary: 0.5
 --- !u!1 &2582252855177673219
 GameObject:
   m_ObjectHideFlags: 0
@@ -232,7 +265,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 2147483647
+  m_StaticEditorFlags: 0
   m_IsActive: 1
 --- !u!4 &2799810783292365302
 Transform:
@@ -303,11 +336,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 680135326523474425, guid: c26259aaf444f494b8296ea48a4b9177, type: 3}
       propertyPath: m_StaticEditorFlags
-      value: 2147483647
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3050607550654335648, guid: c26259aaf444f494b8296ea48a4b9177, type: 3}
       propertyPath: m_Convex
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3050607550654335648, guid: c26259aaf444f494b8296ea48a4b9177, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

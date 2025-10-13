@@ -40,4 +40,20 @@ public class UIManager : Singleton<UIManager>
         timerText.text = "Time: " + Mathf.CeilToInt(timeLeft).ToString();
     }
 
+    public void CallStartGame()
+    {
+        GameManager.Instance.StartGame();
+    }
+
+    public void CallQuitToMenu()
+    {
+        GameManager.Instance.QuitToMenu();
+    }
+
+
+    public void CallExitGame()
+    {
+        GameManager.Instance.ExitGame();
+    }
+
 }

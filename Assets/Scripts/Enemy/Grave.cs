@@ -11,8 +11,6 @@ public class Grave : MonoBehaviour
     public int GraveId => graveId; // Public property to access the ID
 
     [SerializeField] private Enemy enemyPrefab;
-    [SerializeField] private Transform spawnPoint;
-    [SerializeField] private Transform[] patrolPoints;
 
 
     private Enemy mySkeleton;
@@ -47,10 +45,8 @@ public class Grave : MonoBehaviour
     public void SpawnEnemy()
     {
         if (mySkeleton != null) return;
-        Transform spawnPoint = this.spawnPoint != null ? this.spawnPoint : transform;
-        mySkeleton = Instantiate(enemyPrefab, spawnPoint.position + Vector3.up * 0.5f, Quaternion.identity);
+        mySkeleton = Instantiate(enemyPrefab, StaticLocationManager.Instance.GetRandomSpawnPoint(), Quaternion.identity);
         mySkeleton.SetGrave(graveId);
-        mySkeleton.SetPatrolPoints(patrolPoints);
         mySkeleton.OnEnemyCollected += HandleEnemyCollected;
     }
 
