@@ -31,7 +31,9 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
         }
         else
         {
+            Debug.Log("Singleton: Instance of " + typeof(T).Name + " already exists. Destroying duplicate.");
             Destroy(gameObject);
+            return;
         }
     }
 }

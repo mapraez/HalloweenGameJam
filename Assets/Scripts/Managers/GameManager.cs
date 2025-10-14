@@ -10,7 +10,8 @@ public enum GameState
     Win,
     Lose,
     GameOver,
-    LevelComplete
+    LevelComplete,
+    LevelMenu
 }
 
 
@@ -63,8 +64,16 @@ public class GameManager : Singleton<GameManager>
         }
     }
 
-    [ContextMenu("Begin Level")]
-    public void BeginLevel()
+    [ContextMenu("Start Game")]
+    public void StartGame()
+    {
+        SceneManager.LoadScene("Level_01");
+        ChangeState(GameState.LevelMenu);
+
+    }
+
+    [ContextMenu("Start Level")]
+    public void StartLevel()
     {
         Debug.Log("GameManager: Starting Level " + CurrentLevel);
         ChangeState(GameState.Playing);
@@ -83,9 +92,11 @@ public class GameManager : Singleton<GameManager>
         }
     }
     
+    [ContextMenu("Load Next Level")]
     public void LoadNextLevel()
     {
-        int nextLevelIndex = CurrentLevel + 1;
+        int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
+        int nextLevelIndex = currentSceneIndex + 1;
         if (nextLevelIndex >= SceneManager.sceneCountInBuildSettings)
         {
             Debug.Log("GameManager: No more levels to load. You win the game!");
@@ -122,7 +133,7 @@ public class GameManager : Singleton<GameManager>
         }
         CurrentLevel = levelIndex;
         SceneManager.LoadScene(levelIndex);
-        ChangeState(GameState.MainMenu);
+        ChangeState(GameState.LevelMenu);
 
     }
 

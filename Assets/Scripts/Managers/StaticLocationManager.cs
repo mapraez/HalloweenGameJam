@@ -14,6 +14,8 @@ public class StaticLocationManager : Singleton<StaticLocationManager>
         base.Awake();
         Debug.Log("SpawnPointManager: Found " + spawnPoints.Length + " spawn points.");
     }
+
+    
     public Vector3 GetRandomSpawnPoint()
     {
 
@@ -70,10 +72,25 @@ public class StaticLocationManager : Singleton<StaticLocationManager>
         return patrolPoints;
     }
 
+
+    public Transform GetPlayerSpawnPoint()
+    {
+        return playerSpawnPoint;
+    }
+    
+
+
+
     void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.gray;
         Gizmos.DrawCube(transform.position, Vector3.one);
+
+        if (playerSpawnPoint != null)
+        {
+            Gizmos.color = Color.magenta;
+            Gizmos.DrawSphere(playerSpawnPoint.position, 0.5f);
+        }
 
         if (spawnPoints != null)
         {
@@ -112,8 +129,4 @@ public class StaticLocationManager : Singleton<StaticLocationManager>
         }
     }
 
-    public Transform GetPlayerSpawnPoint()
-    {
-        return playerSpawnPoint;
-    }
 }

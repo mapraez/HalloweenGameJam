@@ -8,6 +8,7 @@ public class UIManager : Singleton<UIManager>
     [SerializeField] private TextMeshProUGUI timerText;
     [SerializeField] private TextMeshProUGUI scoreText;
     [SerializeField] private GameObject menuPanel;
+    [SerializeField] private GameObject levelMenuPanel;
     [SerializeField] private GameObject gamePanel;
     [SerializeField] private GameObject pausePanel;
     [SerializeField] private GameObject levelCompletePanel;
@@ -23,6 +24,7 @@ public class UIManager : Singleton<UIManager>
     public void ShowPanel(GameState state)
     {
         menuPanel.SetActive(state == GameState.MainMenu);
+        levelMenuPanel.SetActive(state == GameState.LevelMenu);
         gamePanel.SetActive(state == GameState.Playing);
         pausePanel.SetActive(state == GameState.Paused);
         levelCompletePanel.SetActive(state == GameState.LevelComplete);
@@ -44,7 +46,12 @@ public class UIManager : Singleton<UIManager>
 
     public void CallStartGame()
     {
-        GameManager.Instance.BeginLevel();
+        GameManager.Instance.StartGame();
+    }
+
+    public void CallStartLevel()
+    {
+        GameManager.Instance.StartLevel();
     }
 
     public void CallNextLevel()
