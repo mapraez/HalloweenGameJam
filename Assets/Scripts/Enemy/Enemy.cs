@@ -120,7 +120,8 @@ public class Enemy : MonoBehaviour
             // Debug.Log("Enemy is already taking damage, ignoring new damage");
             return;
         }
-        StopAllCoroutines();
+        
+        StopCoroutine(currentPatrolRoutine);
         currentDamageRouting = StartCoroutine(TakeDamageRoutine(damage));
     }
 

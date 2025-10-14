@@ -17,10 +17,12 @@ public class CharacterDisplay : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // Always face the camera
         if (mainCamera != null)
-        {
-            transform.LookAt(transform.position + mainCamera.transform.rotation * Vector3.forward);
-        }
+    {
+        // Copy camera's rotation exactly
+        transform.rotation = mainCamera.transform.rotation;
+    }
     }
     
 

@@ -43,8 +43,16 @@ public class GameManager : Singleton<GameManager>
 
     private void Start()
     {
+        if (SceneManager.GetActiveScene().name == "SampleScene")
+        {
+            Debug.Log("GameManager: Starting in Sample scene, going to LevelMenu state");
+            ChangeState(GameState.LevelMenu);
+            timeLeft = gameTimeLimit;
+            return;
+        }
         Debug.Log("GameManager: Starting in MainMenu state");
         ChangeState(GameState.MainMenu);
+        timeLeft = gameTimeLimit;
         currentScore = 0;
     }
 
@@ -56,7 +64,7 @@ public class GameManager : Singleton<GameManager>
 
         if (timeLeft <= 0)
         {
-            ChangeState(GameState.GameOver);
+            ChangeState(GameState.Lose);
         }
         else
         {
@@ -77,7 +85,6 @@ public class GameManager : Singleton<GameManager>
     {
         Debug.Log("GameManager: Starting Level " + CurrentLevel);
         ChangeState(GameState.Playing);
-        timeLeft = gameTimeLimit;
     }
 
     public void TogglePause()
@@ -166,13 +173,13 @@ public class GameManager : Singleton<GameManager>
         CurrentState = newState;
         Debug.Log("GameManager: Game State changed to: " + CurrentState);
         // Handle state-specific logic here if needed
+        Time.timeScale = 0f;
         switch (CurrentState)
         {
             case GameState.Playing:
                 Time.timeScale = 1f;
                 break;
             default:
-                Time.timeScale = 0f;
                 break;
         }
 
