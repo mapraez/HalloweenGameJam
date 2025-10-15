@@ -20,6 +20,8 @@ public enum GameState
 public class GameManager : Singleton<GameManager>
 {
     public GameState CurrentGameState { get; private set; } = GameState.MainMenu;
+
+
     [Header("Settings")]
     [SerializeField] private float gameTimeLimit = 180f; // in seconds
     [SerializeField] private int targetScore = 100;
@@ -27,13 +29,17 @@ public class GameManager : Singleton<GameManager>
     [SerializeField] public int CurrentLevel { get; set; } = 1;
     [SerializeField] public int GravesLeft { get; set; } = 0;
 
+    [SerializeField] private GameObject playerSpawnEffectPrefab;
 
 
     private int scoreAtLevelStart;
     private float timeLeftAtLevelStart;
+    private int gravesAtLevelStart;
+    private int playerHealthAtLevelStart;
 
     private float timeLeft;
     public int CurrentScore { get; set; } = 0;
+    public int FinalScore { get; set; } = 0;
     public string PlayerName { get; set; } = "Player1";
 
     readonly public string FirstLevelName = "Level_01";
@@ -84,8 +90,9 @@ public class GameManager : Singleton<GameManager>
         CurrentScore += amount;
         if (CurrentScore >= targetScore)
         {
-            ChangeState(GameState.LevelComplete);
-            return;
+            Debug.Log("GameManager: Target score reached!");
+            PlayerController.Instance.HealPlayer(1);
+            targetScore += 100; // Increase target for next time
         }
         UIManager.Instance.UpdateScore(CurrentScore, targetScore);
     }
@@ -110,6 +117,8 @@ public class GameManager : Singleton<GameManager>
         ChangeState(GameState.LevelMenu);
         timeLeft = gameTimeLimit;
         CurrentScore = 0;
+        
+        
     }
 
 
@@ -119,15 +128,23 @@ public class GameManager : Singleton<GameManager>
         Debug.Log("GameManager: Starting Level " + CurrentLevel);
         scoreAtLevelStart = CurrentScore;
         timeLeftAtLevelStart = timeLeft;
+        playerHealthAtLevelStart = PlayerController.Instance.CurrentHealth;
         ChangeState(GameState.Playing); 
+
+        GameObject spawnEffect = Instantiate(playerSpawnEffectPrefab, PlayerController.Instance.transform.position + Vector3.up * .1f, Quaternion.identity);
+        Destroy(spawnEffect, 2f); // Destroy the effect after 2 seconds
     }
 
     [ContextMenu("Restart Current Level")]
     public void RestartCurrentLevel()
     {
+        Debug.Log("GameManager: Restarting Level " + CurrentLevel);
         CurrentScore = scoreAtLevelStart;
         timeLeft = timeLeftAtLevelStart;
+        GravesLeft = 0;
+        PlayerController.Instance.SetPlayerHealth(playerHealthAtLevelStart);
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        ChangeState(GameState.LevelMenu);
     }
 
     [ContextMenu("Load Next Level")]
@@ -135,6 +152,10 @@ public class GameManager : Singleton<GameManager>
     {
         int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
         int nextLevelIndex = currentSceneIndex + 1;
+
+        CurrentLevel++;
+        GravesLeft = 0;
+
         if (nextLevelIndex >= SceneManager.sceneCountInBuildSettings)
         {
             Debug.Log("GameManager: No more levels to load. You win the game!");
@@ -153,7 +174,6 @@ public class GameManager : Singleton<GameManager>
             Debug.LogError("GameManager: Invalid level index: " + levelIndex);
             return;
         }
-        CurrentLevel = levelIndex;
         SceneManager.LoadScene(levelIndex);
         ChangeState(GameState.LevelMenu);
         SoundManager.Instance.PlayGameplayMusic();
@@ -183,7 +203,7 @@ public class GameManager : Singleton<GameManager>
     public void WinGame()
     {
         Debug.Log("GameManager: You Win!");
-        CurrentScore += Mathf.FloorToInt(timeLeft); // Bonus for remaining time
+        FinalScore = CurrentScore + Mathf.CeilToInt(timeLeft); // Bonus for remaining time
 
         ChangeState(GameState.Win);
         SoundManager.Instance.PlayWinMusic();
@@ -213,20 +233,23 @@ public class GameManager : Singleton<GameManager>
         Time.timeScale = 0f;
         switch (CurrentGameState)
         {
+            case GameState.MainMenu:
+                Time.timeScale = 1f;
+                if (SceneManager.GetActiveScene().name != MainMenuSceneName)
+                {
+                    SceneManager.LoadScene(MainMenuSceneName);
+                }
+                break;
             case GameState.Playing:
                 Time.timeScale = 1f;
                 break;
             case GameState.Win:
             case GameState.Lose:
             case GameState.GameOver:
+                UIManager.Instance.ClearGravesText();
                 SceneManager.LoadScene(GameOverSceneName);
                 break;
-            case GameState.MainMenu:
-                if (SceneManager.GetActiveScene().name != MainMenuSceneName)
-                {
-                    SceneManager.LoadScene(MainMenuSceneName);
-                }
-                break;
+            
             default:
                 break;
         }
@@ -241,12 +264,15 @@ public class GameManager : Singleton<GameManager>
     {
         GravesLeft++;
         Debug.Log("Grave spawned. Graves left: " + GravesLeft);
+        UIManager.Instance.UpdateGravesLeft(GravesLeft);
     }
 
     private void HandleGraveCleared(Grave grave)
     {
         GravesLeft--;
         Debug.Log("Grave cleared. Graves left: " + GravesLeft);
+        UIManager.Instance.UpdateGravesLeft(GravesLeft);
+        
         if (GravesLeft <= 0 && CurrentGameState == GameState.Playing)
         {
             ChangeState(GameState.LevelComplete);

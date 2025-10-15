@@ -4,14 +4,19 @@ using UnityEngine;
 public class ScoreObject : MonoBehaviour
 {
 
-    [SerializeField] private TextMeshProUGUI scoreText;
     [SerializeField] private TextMeshProUGUI nameText;
+    [SerializeField] private TextMeshProUGUI scoreText;
+
+    void OnEnable()
+    {
+        SetName(GameManager.Instance.PlayerName);
+        SetScore(GameManager.Instance.FinalScore);
+    }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        SetName(GameManager.Instance.PlayerName);
-        SetScore(GameManager.Instance.CurrentScore);
+        
     }
 
     // Update is called once per frame
@@ -20,14 +25,6 @@ public class ScoreObject : MonoBehaviour
 
     }
 
-    public void SetScore(int score)
-    {
-        if (scoreText != null)
-        {
-            scoreText.text = score.ToString();
-        }
-    }
-    
     public void SetName(string name)
     {
         if (nameText != null)
@@ -35,4 +32,14 @@ public class ScoreObject : MonoBehaviour
             nameText.text = name;
         }
     }
+    
+    public void SetScore(int score)
+    {
+        if (scoreText != null)
+        {
+            scoreText.text = "Final Score: " + score.ToString();
+        }
+    }
+    
+
 }

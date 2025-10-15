@@ -2,22 +2,29 @@ using UnityEngine;
 
 public class SoundManager : Singleton<SoundManager>
 {
+    [Header("Audio Sources")]
     [SerializeField] private AudioSource backgroundMusicSource;
     [SerializeField] private AudioSource soundeffectSource;
 
 
+    [Header("Audio Clips")]
     [SerializeField] private AudioClip mainMenuMusic;
     [SerializeField] private AudioClip gameplayMusic;
     [SerializeField] private AudioClip winMusic;
     [SerializeField] private AudioClip gameOverMusic;
 
+
+    [SerializeField] private AudioClip playerDamagedSoundEffect;
+    [SerializeField] private AudioClip playerHealSoundEffect;
+
+    [Header("Test Sound")]
     [SerializeField] private AudioClip testSoundEffect;
     protected override void Awake()
     {
         base.Awake();
     }
 
-    
+
     public void PlaySoundEffect(AudioClip clip)
     {
         if (clip == null)
@@ -106,5 +113,14 @@ public class SoundManager : Singleton<SoundManager>
         PlayBackgroundMusic(gameOverMusic);
     }
 
+    public void PlayPlayerDamagedSoundEffect()
+    {
+        PlaySoundEffect(playerDamagedSoundEffect);
+    }
+
+    public void PlayPlayerHealSoundEffect()
+    {
+        PlaySoundEffect(playerHealSoundEffect);
+    }
 
 }

@@ -103,6 +103,7 @@ MonoBehaviour:
   maxHealth: 6
   moveSpeed: 5
   rotationSpeed: 720
+  playerDamagedVFXPrefab: {fileID: 8771972552311404799, guid: bbf9e36a48d6c5648a13889afab076fd, type: 3}
 --- !u!1 &1319129792621594575
 GameObject:
   m_ObjectHideFlags: 0
@@ -1099,6 +1100,18 @@ PrefabInstance:
       value: Death
       objectReference: {fileID: 0}
     - target: {fileID: 4112793798392651557, guid: 8dc7544ce3e6c744381315c8f3d1bb41, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4112793798392651557, guid: 8dc7544ce3e6c744381315c8f3d1bb41, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4112793798392651557, guid: 8dc7544ce3e6c744381315c8f3d1bb41, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4112793798392651557, guid: 8dc7544ce3e6c744381315c8f3d1bb41, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -1138,11 +1151,73 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4112793798392651557, guid: 8dc7544ce3e6c744381315c8f3d1bb41, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8340140979802376032, guid: 8dc7544ce3e6c744381315c8f3d1bb41, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.6725696
+      objectReference: {fileID: 0}
+    - target: {fileID: 8340140979802376032, guid: 8dc7544ce3e6c744381315c8f3d1bb41, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.051676497
+      objectReference: {fileID: 0}
+    - target: {fileID: 8340140979802376032, guid: 8dc7544ce3e6c744381315c8f3d1bb41, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.022699257
+      objectReference: {fileID: 0}
+    - target: {fileID: 8340140979802376032, guid: 8dc7544ce3e6c744381315c8f3d1bb41, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.7378784
+      objectReference: {fileID: 0}
+    - target: {fileID: 8340140979802376032, guid: 8dc7544ce3e6c744381315c8f3d1bb41, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 5.913
+      objectReference: {fileID: 0}
+    - target: {fileID: 8340140979802376032, guid: 8dc7544ce3e6c744381315c8f3d1bb41, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 2.635
+      objectReference: {fileID: 0}
+    - target: {fileID: 8340140979802376032, guid: 8dc7544ce3e6c744381315c8f3d1bb41, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 95.438
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3627724849967777183, guid: 8dc7544ce3e6c744381315c8f3d1bb41, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7209591081054803549}
   m_SourcePrefab: {fileID: 100100000, guid: 8dc7544ce3e6c744381315c8f3d1bb41, type: 3}
+--- !u!1 &7179436819122159720 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3627724849967777183, guid: 8dc7544ce3e6c744381315c8f3d1bb41, type: 3}
+  m_PrefabInstance: {fileID: 5907103373048202743}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &7209591081054803549
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7179436819122159720}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: fd25fe166fa84b0498c254c3d744450e, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!4 &7559761548442557138 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4112793798392651557, guid: 8dc7544ce3e6c744381315c8f3d1bb41, type: 3}

@@ -20,6 +20,9 @@ public class Grave : MonoBehaviour
     [SerializeField] GameObject clearedEnemyObject;
     [SerializeField] GameObject closedGraveObject;
 
+    [SerializeField] GameObject openGraveVFXPrefab;
+    [SerializeField] GameObject closeGraveVFXPrefab;
+
     void Awake()
     {
         // Assign unique ID if not already set
@@ -80,6 +83,11 @@ public class Grave : MonoBehaviour
         yield return new WaitForSeconds(1f);
         closedGraveObject.SetActive(true);
 
+        if (closeGraveVFXPrefab != null)
+        {
+            GameObject vfx = Instantiate(closeGraveVFXPrefab, transform.position + Vector3.up * .5f + Vector3.back * 1.5f, Quaternion.identity);
+            Destroy(vfx, 3f);
+        }
         while (closedGraveObject.transform.localPosition.x > 0f)
         {
             closedGraveObject.transform.localPosition += Vector3.left * Time.deltaTime;

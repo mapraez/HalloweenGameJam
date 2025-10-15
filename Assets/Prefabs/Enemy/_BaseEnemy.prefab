@@ -156,7 +156,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8620221330082708049}
-  - component: {fileID: 5278434483295308467}
   - component: {fileID: 4958371251227658011}
   - component: {fileID: 2031114472415879038}
   - component: {fileID: 3044766229445825001}
@@ -184,33 +183,6 @@ Transform:
   - {fileID: 103025876919591619}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!54 &5278434483295308467
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4411728227564083568}
-  serializedVersion: 5
-  m_Mass: 1
-  m_LinearDamping: 0
-  m_AngularDamping: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 0
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 112
-  m_CollisionDetection: 0
 --- !u!136 &4958371251227658011
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -273,6 +245,7 @@ MonoBehaviour:
   patrolSpeed: 2
   patrolWaitTime: 2
   hitSounds: []
+  hitVFXPrefab: {fileID: 8771972552311404799, guid: bbf9e36a48d6c5648a13889afab076fd, type: 3}
   deathSound: {fileID: 0}
   characterDisplay: {fileID: 4474576227816930904}
 --- !u!1 &4631636624054339869

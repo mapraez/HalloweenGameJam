@@ -19,6 +19,7 @@ public class Enemy : MonoBehaviour
     [Header("Enemy References")]
 
     [SerializeField] private AudioClip[] hitSounds;
+    [SerializeField] private GameObject hitVFXPrefab;
     [SerializeField] private AudioClip deathSound;
     private int currentPatrolIndex;
     private int nextPatrolIndex;
@@ -96,20 +97,21 @@ public class Enemy : MonoBehaviour
         Transform[] points = StaticLocationManager.Instance.GetPatrolPoints();
         patrolPoints = points;
 
-        Debug.Log("Enemy: CurrentLocation: " + transform.position);
+        // Debug.Log("Enemy: CurrentLocation: " + transform.position);
 
         float closestDistance = Mathf.Infinity;
         for (int i = 0; i < patrolPoints.Length; i++)
         {
             float distance = Vector3.Distance(transform.position, patrolPoints[i].position);
-            Debug.Log("Distance to patrol point " + i + ": " + distance);
+
+            // Debug.Log("Distance to patrol point " + i + ": " + distance);
             if (distance < closestDistance)
             {
                 closestDistance = distance;
                 currentPatrolIndex = i;
             }
         }
-        Debug.Log("Enemy: Closest patrol point index: " + currentPatrolIndex);
+        // Debug.Log("Enemy: Closest patrol point index: " + currentPatrolIndex);
         
     }
 
@@ -131,6 +133,11 @@ public class Enemy : MonoBehaviour
 
         currentHealth -= damage;
         SoundManager.Instance.PlaySoundEffect(hitSounds[Random.Range(0, hitSounds.Length)]);
+        if (hitVFXPrefab != null)
+        {
+            GameObject vfx = Instantiate(hitVFXPrefab, transform.position + Vector3.up * 1f, Quaternion.identity);
+            Destroy(vfx, 2f);
+        }
 
         // Damage Animation could go here
 

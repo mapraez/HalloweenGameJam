@@ -128,6 +128,8 @@ MonoBehaviour:
   enemyPrefab: {fileID: 2733812617970955119, guid: b3110109979077d49b77bbabf243bd25, type: 3}
   clearedEnemyObject: {fileID: 2138198474465745001}
   closedGraveObject: {fileID: 9027890752647816394}
+  openGraveVFXPrefab: {fileID: 0}
+  closeGraveVFXPrefab: {fileID: 5642766282230003982, guid: b5c8ca7ed10b61e499cce8ec3b6e2e4c, type: 3}
 --- !u!1 &2582252855177673219
 GameObject:
   m_ObjectHideFlags: 0

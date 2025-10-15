@@ -9,6 +9,7 @@ public class UIManager : Singleton<UIManager>
     [Header("UI References")]
     [SerializeField] private TextMeshProUGUI timerText;
     [SerializeField] private TextMeshProUGUI scoreText;
+    [SerializeField] private TextMeshProUGUI gravesLeftText;
 
     [Header("Panels")]
     [SerializeField] private GameObject menuPanel;
@@ -64,6 +65,11 @@ public class UIManager : Singleton<UIManager>
         timerText.text = "Time: " + Mathf.CeilToInt(timeLeft).ToString();
     }
 
+    public void UpdateGravesLeft(int gravesLeft)
+    {
+        gravesLeftText.text = "Graves Left: " + gravesLeft.ToString();
+    }
+
     public void CallStartGame()
     {
         GameManager.Instance.StartGame();
@@ -72,6 +78,11 @@ public class UIManager : Singleton<UIManager>
     public void CallStartLevel()
     {
         GameManager.Instance.StartCurrentLevel();
+    }
+
+    public void CallRestartLevel()
+    {
+        GameManager.Instance.RestartCurrentLevel();
     }
 
     public void CallNextLevel()
@@ -100,6 +111,11 @@ public class UIManager : Singleton<UIManager>
     public void UpdateHealth(int currentHealth, int maxHealth)
     {
         gamePanel.GetComponent<GamePanelUI>().SetHealth(currentHealth, maxHealth);
+    }
+
+    public void ClearGravesText()
+    {
+        gravesLeftText.text = "";
     }
 
     void OnDestroy()

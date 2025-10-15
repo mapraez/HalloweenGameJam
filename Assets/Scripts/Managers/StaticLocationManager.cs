@@ -12,7 +12,7 @@ public class StaticLocationManager : Singleton<StaticLocationManager>
     override protected void Awake()
     {
         base.Awake();
-        Debug.Log("SpawnPointManager: Found " + spawnPoints.Length + " spawn points.");
+        // Debug.Log("StaticLocationManager: Found " + spawnPoints.Length + " spawn points.");
     }
 
     
@@ -21,7 +21,7 @@ public class StaticLocationManager : Singleton<StaticLocationManager>
 
         if (spawnPoints.Length == 0)
         {
-            Debug.LogWarning("No spawn points available! Using default position.");
+            // Debug.LogWarning("StaticLocationManager: No spawn points available! Using default position.");
             return Vector3.up; // Default fallback position
         }
 
@@ -42,11 +42,11 @@ public class StaticLocationManager : Singleton<StaticLocationManager>
 
         if (selectedSpawnPoint == null)
         {
-            Debug.LogWarning("All spawn points are occupied. Selecting a random one anyway.");
+            // Debug.LogWarning("StaticLocationManager: All spawn points are occupied. Selecting a random one anyway.");
             selectedSpawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
         }
 
-        Debug.Log("Selected spawn point at position: " + selectedSpawnPoint.position);
+        // Debug.Log("StaticLocationManager: Selected spawn point at position: " + selectedSpawnPoint.position);
         return selectedSpawnPoint.position;
     }
 
@@ -63,7 +63,7 @@ public class StaticLocationManager : Singleton<StaticLocationManager>
                 break;
             }
         }
-        Debug.Log("Spawn point at " + spawnPoint.position + " occupied: " + isOccupied);
+        // Debug.Log("Spawn point at " + spawnPoint.position + " occupied: " + isOccupied);
         return isOccupied;
     }
 

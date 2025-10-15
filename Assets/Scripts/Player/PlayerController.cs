@@ -8,6 +8,7 @@ public class PlayerController : Singleton<PlayerController>
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float rotationSpeed = 720f;
 
+    [SerializeField] private GameObject playerDamagedVFXPrefab;
 
     private Rigidbody rb;
     private Vector2 MovementInput => inputActions.Player.Move.ReadValue<Vector2>();
@@ -34,6 +35,8 @@ public class PlayerController : Singleton<PlayerController>
     {
         SceneManager.sceneLoaded += HandleOnSceneLoaded;
         HandleOnSceneLoaded(SceneManager.GetActiveScene(), LoadSceneMode.Single);
+        CurrentHealth = maxHealth;
+        UIManager.Instance.UpdateHealth(CurrentHealth, maxHealth);
     }
 
     private void Update()
@@ -67,7 +70,7 @@ public class PlayerController : Singleton<PlayerController>
         if (GameManager.Instance.CurrentGameState != GameState.Playing) return;
         if (IsAttacking) return;
 
-        Debug.Log("Attack started");
+        // Debug.Log("Attack started");
         IsAttacking = true;
         lightWeapon.ToggleLights(true);
     }
@@ -75,35 +78,41 @@ public class PlayerController : Singleton<PlayerController>
     {
         if (!IsAttacking) return;
 
-        Debug.Log("Attack stopped");
+        // Debug.Log("Attack stopped");
         IsAttacking = false;
         lightWeapon.ToggleLights(false);
     }
 
-    private void HandleOnSceneLoaded(Scene scene, LoadSceneMode mode)
-    {
-        ResetPlayer();
-
-        Transform spawnPoint = StaticLocationManager.Instance.GetPlayerSpawnPoint();
-        if (spawnPoint != null)
-        {
-            transform.position = spawnPoint.position;
-            transform.rotation = spawnPoint.rotation;
-        }
-        else
-        {
-            Debug.LogWarning("PlayerController: No spawn point found for player.");
-            transform.position = Vector3.zero;
-            transform.rotation = Quaternion.identity;
-        }
-    }
 
     [ContextMenu("Reset Player")]
     public void ResetPlayer()
     {
-        CurrentHealth = maxHealth;
+        // CurrentHealth = maxHealth;
         UIManager.Instance.UpdateHealth(CurrentHealth, maxHealth);
         Debug.Log("Player health reset to max: " + maxHealth);
+
+    }
+
+    [ContextMenu("Test Heal Player")]
+    public void TestHealPlayer()
+    {
+        HealPlayer(1);
+    }
+
+    public void HealPlayer(int amount)
+    {
+        CurrentHealth += amount;
+        CurrentHealth = Mathf.Clamp(CurrentHealth, 0, maxHealth);
+        SoundManager.Instance.PlayPlayerHealSoundEffect();
+        UIManager.Instance.UpdateHealth(CurrentHealth, maxHealth);
+        Debug.Log("Player healed by " + amount + ". Current health: " + CurrentHealth);
+    }
+
+    public void SetPlayerHealth(int health)
+    {
+        CurrentHealth = Mathf.Clamp(health, 0, maxHealth);
+        UIManager.Instance.UpdateHealth(CurrentHealth, maxHealth);
+        Debug.Log("Player health set to " + CurrentHealth);
     }
 
     [ContextMenu("Test Take Damage")]
@@ -124,7 +133,13 @@ public class PlayerController : Singleton<PlayerController>
 
         CurrentHealth -= damage;
         CurrentHealth = Mathf.Clamp(CurrentHealth, 0, maxHealth);
-        Debug.Log("Player took damage. Current health: " + CurrentHealth);
+        SoundManager.Instance.PlayPlayerDamagedSoundEffect();
+        if (playerDamagedVFXPrefab != null)
+        {
+            GameObject vfx = Instantiate(playerDamagedVFXPrefab, transform.position, Quaternion.identity);
+            Destroy(vfx, 2f);
+        }
+        Debug.Log("Player took " + damage + " damage. Current health: " + CurrentHealth);
 
         UIManager.Instance.UpdateHealth(CurrentHealth, maxHealth);
 
@@ -143,6 +158,23 @@ public class PlayerController : Singleton<PlayerController>
         }
     }
 
+    private void HandleOnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        ResetPlayer();
+
+        Transform spawnPoint = StaticLocationManager.Instance.GetPlayerSpawnPoint();
+        if (spawnPoint != null)
+        {
+            transform.position = spawnPoint.position;
+            transform.rotation = spawnPoint.rotation;
+        }
+        else
+        {
+            Debug.LogWarning("PlayerController: No spawn point found for player.");
+            transform.position = Vector3.zero;
+            transform.rotation = Quaternion.identity;
+        }
+    }
 
     void OnDestroy()
     {

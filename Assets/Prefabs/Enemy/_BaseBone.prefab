@@ -66,4 +66,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e4afabacc18f5947863ff839fbd5161, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Bone
+  scoreValue: 25
+  pickupSound: {fileID: 0}
   boneType: 0
