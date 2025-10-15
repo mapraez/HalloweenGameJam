@@ -3,6 +3,8 @@ using UnityEngine.SceneManagement;
 
 public class PlayerController : Singleton<PlayerController>
 {
+    [SerializeField] private int maxHealth = 6;
+    public int CurrentHealth { get; private set; }
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float rotationSpeed = 720f;
 
@@ -23,6 +25,8 @@ public class PlayerController : Singleton<PlayerController>
         inputActions.Player.Attack.performed += ctx => Attack();
         inputActions.Player.Attack.canceled += ctx => StopAttack();
         inputActions.Player.Pause.performed += ctx => GameManager.Instance.TogglePause();
+
+
     }
 
     void Start()
@@ -59,7 +63,7 @@ public class PlayerController : Singleton<PlayerController>
     }
     private void Attack()
     {
-        if (GameManager.Instance.CurrentState != GameState.Playing) return;
+        if (GameManager.Instance.CurrentGameState != GameState.Playing) return;
         if (IsAttacking) return;
 
         Debug.Log("Attack started");
@@ -77,6 +81,8 @@ public class PlayerController : Singleton<PlayerController>
 
     private void HandleOnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        ResetPlayer();
+
         Transform spawnPoint = StaticLocationManager.Instance.GetPlayerSpawnPoint();
         if (spawnPoint != null)
         {
@@ -88,6 +94,51 @@ public class PlayerController : Singleton<PlayerController>
             Debug.LogWarning("PlayerController: No spawn point found for player.");
             transform.position = Vector3.zero;
             transform.rotation = Quaternion.identity;
+        }
+    }
+
+    [ContextMenu("Reset Player")]
+    public void ResetPlayer()
+    {
+        CurrentHealth = maxHealth;
+        UIManager.Instance.UpdateHealth(CurrentHealth, maxHealth);
+        Debug.Log("Player health reset to max: " + maxHealth);
+    }
+
+    [ContextMenu("Test Take Damage")]
+    private void TestTakeDamage()
+    {
+        TakeDamage(1);
+    }
+
+    [ContextMenu("Test Kill Player")]
+    private void TestKillPlayer()
+    {
+        TakeDamage(CurrentHealth);
+    }
+
+    public void TakeDamage(int damage)
+    {
+        if (GameManager.Instance.CurrentGameState != GameState.Playing) return;
+
+        CurrentHealth -= damage;
+        CurrentHealth = Mathf.Clamp(CurrentHealth, 0, maxHealth);
+        Debug.Log("Player took damage. Current health: " + CurrentHealth);
+
+        UIManager.Instance.UpdateHealth(CurrentHealth, maxHealth);
+
+        if (CurrentHealth <= 0)
+        {
+            GameManager.Instance.ChangeState(GameState.Lose);
+        }
+    }
+
+    void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+            Debug.Log("Player collided with enemy: " + collision.gameObject.name);
+            TakeDamage(1);
         }
     }
 

@@ -3,8 +3,8 @@ using UnityEngine;
 public class StaticLocationManager : Singleton<StaticLocationManager>
 {
     [Header("Spawn Points")]
-    [SerializeField] private Transform[] spawnPoints;
-    [SerializeField] private Transform[] patrolPoints;
+    [SerializeField] private Transform[] spawnPoints = new Transform[0];
+    [SerializeField] private Transform[] patrolPoints = new Transform[0];
 
     [SerializeField] private Transform playerSpawnPoint;
 
@@ -21,7 +21,7 @@ public class StaticLocationManager : Singleton<StaticLocationManager>
 
         if (spawnPoints.Length == 0)
         {
-            Debug.LogWarning("No spawn points available!");
+            Debug.LogWarning("No spawn points available! Using default position.");
             return Vector3.up; // Default fallback position
         }
 

@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 
@@ -51,7 +52,7 @@ public class UIManager : Singleton<UIManager>
 
     public void CallStartLevel()
     {
-        GameManager.Instance.StartLevel();
+        GameManager.Instance.StartCurrentLevel();
     }
 
     public void CallNextLevel()
@@ -70,4 +71,15 @@ public class UIManager : Singleton<UIManager>
         GameManager.Instance.ExitGame();
     }
 
+    public void UpdateUI(GameState currentGameState, float timeLeft, int currentScore, int targetScore)
+    {
+        ShowPanel(currentGameState);
+        UpdateTimer(timeLeft);
+        UpdateScore(currentScore, targetScore);
+    }
+
+    public void UpdateHealth(int currentHealth, int maxHealth)
+    {
+        gamePanel.GetComponent<GamePanelUI>().SetHealth(currentHealth, maxHealth);
+    }
 }

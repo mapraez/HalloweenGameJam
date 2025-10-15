@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -18,7 +19,7 @@ public enum GameState
 
 public class GameManager : Singleton<GameManager>
 {
-    public GameState CurrentState { get; private set; } = GameState.MainMenu;
+    public GameState CurrentGameState { get; private set; } = GameState.MainMenu;
     [Header("Settings")]
     [SerializeField] private float gameTimeLimit = 180f; // in seconds
     [SerializeField] private int targetScore = 100;
@@ -27,10 +28,12 @@ public class GameManager : Singleton<GameManager>
     [SerializeField] public int GravesLeft { get; set; } = 0;
 
 
-
+    private int scoreAtLevelStart;
+    private float timeLeftAtLevelStart;
 
     private float timeLeft;
-    private int currentScore = 0;
+    public int CurrentScore { get; set; } = 0;
+    public string PlayerName { get; set; } = "Player1";
 
 
     override protected void Awake()
@@ -52,13 +55,12 @@ public class GameManager : Singleton<GameManager>
         }
         Debug.Log("GameManager: Starting in MainMenu state");
         ChangeState(GameState.MainMenu);
-        timeLeft = gameTimeLimit;
-        currentScore = 0;
+
     }
 
     void Update()
     {
-        if (CurrentState != GameState.Playing) return;
+        if (CurrentGameState != GameState.Playing) return;
 
         timeLeft -= Time.deltaTime;
 
@@ -72,33 +74,56 @@ public class GameManager : Singleton<GameManager>
         }
     }
 
+    public void AddScore(int amount)
+    {
+        CurrentScore += amount;
+        if (CurrentScore >= targetScore)
+        {
+            ChangeState(GameState.LevelComplete);
+            return;
+        }
+        UIManager.Instance.UpdateScore(CurrentScore, targetScore);
+    }
+
+    public void TogglePause()
+    {
+        if (CurrentGameState == GameState.Playing)
+        {
+            ChangeState(GameState.Paused);
+        }
+        else if (CurrentGameState == GameState.Paused)
+        {
+            ChangeState(GameState.Playing);
+        }
+    }
+
     [ContextMenu("Start Game")]
     public void StartGame()
     {
         SceneManager.LoadScene("Level_01");
         ChangeState(GameState.LevelMenu);
-
+        timeLeft = gameTimeLimit;
+        CurrentScore = 0;
     }
 
-    [ContextMenu("Start Level")]
-    public void StartLevel()
+
+    [ContextMenu("Start Current Level")]
+    public void StartCurrentLevel()
     {
         Debug.Log("GameManager: Starting Level " + CurrentLevel);
+        scoreAtLevelStart = CurrentScore;
+        timeLeftAtLevelStart = timeLeft;
         ChangeState(GameState.Playing);
     }
 
-    public void TogglePause()
+    [ContextMenu("Restart Current Level")]
+    public void RestartCurrentLevel()
     {
-        if (CurrentState == GameState.Playing)
-        {
-            ChangeState(GameState.Paused);
-        }
-        else if (CurrentState == GameState.Paused)
-        {
-            ChangeState(GameState.Playing);
-        }
+        CurrentScore = scoreAtLevelStart;
+        timeLeft = timeLeftAtLevelStart;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
-    
+
     [ContextMenu("Load Next Level")]
     public void LoadNextLevel()
     {
@@ -114,22 +139,6 @@ public class GameManager : Singleton<GameManager>
 
     }
 
-    public void WinGame()
-    {
-        Debug.Log("GameManager: You Win!");
-        ChangeState(GameState.Win);
-    }
-
-    public void EndGame()
-    {
-        Debug.Log("GameManager: Game Over");
-        ChangeState(GameState.GameOver);
-    }
-
-    public void RestartCurrentLevel()
-    {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-    }
 
     public void LoadLevel(int levelIndex)
     {
@@ -146,8 +155,11 @@ public class GameManager : Singleton<GameManager>
 
     public void QuitToMenu()
     {
+        CurrentScore = 0;
+        timeLeft = gameTimeLimit;
+        Destroy(PlayerController.Instance.gameObject);
+        Debug.Log("GameManager: Quitting to Main Menu");
         ChangeState(GameState.MainMenu);
-        // SceneManager.LoadScene("MainMenu");
     }
 
     public void ExitGame()
@@ -156,35 +168,56 @@ public class GameManager : Singleton<GameManager>
         Application.Quit();
     }
 
-
-    public void AddScore(int amount)
+    [ContextMenu("Win Game")]
+    public void WinGame()
     {
-        currentScore += amount;
-        if (currentScore >= targetScore)
-        {
-            ChangeState(GameState.LevelComplete);
-            return;
-        }
-        UIManager.Instance.UpdateScore(currentScore, targetScore);
+        Debug.Log("GameManager: You Win!");
+        CurrentScore += Mathf.FloorToInt(timeLeft); // Bonus for remaining time
+
+        ChangeState(GameState.Win);
+    }
+
+    [ContextMenu("Lose Game")]
+    public void LoseGame()
+    {
+        Debug.Log("GameManager: You Lose!");
+        ChangeState(GameState.Lose);
+    }
+
+    [ContextMenu("End Game")]
+    public void EndGame()
+    {
+        Debug.Log("GameManager: Game Over");
+        ChangeState(GameState.GameOver);
     }
 
     public void ChangeState(GameState newState)
     {
-        CurrentState = newState;
-        Debug.Log("GameManager: Game State changed to: " + CurrentState);
+        CurrentGameState = newState;
+        Debug.Log("GameManager: Game State changed to: " + CurrentGameState);
         // Handle state-specific logic here if needed
         Time.timeScale = 0f;
-        switch (CurrentState)
+        switch (CurrentGameState)
         {
             case GameState.Playing:
                 Time.timeScale = 1f;
                 break;
+            case GameState.Win:
+            case GameState.Lose:
+            case GameState.GameOver:
+                SceneManager.LoadScene("GameOverScene");
+                break;
+            case GameState.MainMenu:
+                if (SceneManager.GetActiveScene().name != "MainMenu")
+                {
+                    SceneManager.LoadScene("MainMenu");
+                }
+                break;
             default:
                 break;
         }
+        UIManager.Instance.UpdateUI(CurrentGameState, timeLeft, CurrentScore, targetScore);
 
-        UIManager.Instance.ShowPanel(CurrentState);
-        UIManager.Instance.UpdateScore(currentScore, targetScore);
     }
 
 
@@ -200,9 +233,16 @@ public class GameManager : Singleton<GameManager>
     {
         GravesLeft--;
         Debug.Log("Grave cleared. Graves left: " + GravesLeft);
-        if (GravesLeft <= 0 && CurrentState == GameState.Playing)
+        if (GravesLeft <= 0 && CurrentGameState == GameState.Playing)
         {
             ChangeState(GameState.LevelComplete);
         }
+    }
+
+
+    void OnDestroy()
+    {
+        Grave.OnGraveSpawned -= HandleGraveSpawned;
+        Grave.OnGraveCleared -= HandleGraveCleared;
     }
 }
