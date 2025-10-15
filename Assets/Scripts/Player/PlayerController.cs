@@ -18,6 +18,7 @@ public class PlayerController : Singleton<PlayerController>
     override protected void Awake()
     {
         base.Awake();
+        Debug.Log("PlayerController: Awake called");
         rb = GetComponent<Rigidbody>();
         lightWeapon = GetComponentInChildren<LightWeapon>();
         inputActions = new InputSystem_Actions();
@@ -145,7 +146,7 @@ public class PlayerController : Singleton<PlayerController>
 
     void OnDestroy()
     {
-        lightWeapon.ToggleLights(false);
+        lightWeapon?.ToggleLights(false);
         inputActions.Player.Attack.performed -= ctx => Attack();
         inputActions.Player.Attack.canceled -= ctx => StopAttack();
         inputActions.Player.Disable();

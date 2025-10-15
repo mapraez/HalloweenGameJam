@@ -155,6 +155,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.y
       value: -130
       objectReference: {fileID: 0}
+    - target: {fileID: 6103133412217801978, guid: 937c71d5c05cc1249bc4ca671ad20b29, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6428010753267501318, guid: 937c71d5c05cc1249bc4ca671ad20b29, type: 3}
       propertyPath: m_Name
       value: StaticLocationManager

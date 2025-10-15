@@ -1,6 +1,7 @@
 using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UIManager : Singleton<UIManager>
 {
@@ -8,6 +9,8 @@ public class UIManager : Singleton<UIManager>
     [Header("UI References")]
     [SerializeField] private TextMeshProUGUI timerText;
     [SerializeField] private TextMeshProUGUI scoreText;
+
+    [Header("Panels")]
     [SerializeField] private GameObject menuPanel;
     [SerializeField] private GameObject levelMenuPanel;
     [SerializeField] private GameObject gamePanel;
@@ -16,14 +19,30 @@ public class UIManager : Singleton<UIManager>
     [SerializeField] private GameObject winPanel;
     [SerializeField] private GameObject losePanel;
     [SerializeField] private GameObject gameOverPanel;
+    [SerializeField] private GameObject settingsPanel;
+
+    [Header("Sound Settings")]
+    [SerializeField] private Slider backgroundMusicVolumeSlider;
+    [SerializeField] private Slider soundEffectVolumeSlider;
 
     override protected void Awake()
     {
         base.Awake();
+
+    }
+
+    void Start()
+    {
+        backgroundMusicVolumeSlider.value = SoundManager.Instance.GetBackgroundMusicVolume();
+        soundEffectVolumeSlider.value = SoundManager.Instance.GetSoundEffectVolume();
+        backgroundMusicVolumeSlider.onValueChanged.AddListener(SoundManager.Instance.SetBackgroundMusicVolume);
+        soundEffectVolumeSlider.onValueChanged.AddListener(SoundManager.Instance.SetSoundEffectVolume);
     }
 
     public void ShowPanel(GameState state)
     {
+        settingsPanel.SetActive(state == GameState.MainMenu || state == GameState.Paused);
+
         menuPanel.SetActive(state == GameState.MainMenu);
         levelMenuPanel.SetActive(state == GameState.LevelMenu);
         gamePanel.SetActive(state == GameState.Playing);
@@ -62,7 +81,7 @@ public class UIManager : Singleton<UIManager>
 
     public void CallQuitToMenu()
     {
-        GameManager.Instance.QuitToMenu();
+        GameManager.Instance.GoToMainMenu();
     }
 
 
@@ -81,5 +100,11 @@ public class UIManager : Singleton<UIManager>
     public void UpdateHealth(int currentHealth, int maxHealth)
     {
         gamePanel.GetComponent<GamePanelUI>().SetHealth(currentHealth, maxHealth);
+    }
+
+    void OnDestroy()
+    {
+        backgroundMusicVolumeSlider.onValueChanged.RemoveListener(SoundManager.Instance.SetBackgroundMusicVolume);
+        soundEffectVolumeSlider.onValueChanged.RemoveListener(SoundManager.Instance.SetSoundEffectVolume);
     }
 }

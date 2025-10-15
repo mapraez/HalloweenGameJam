@@ -6,6 +6,12 @@ public class SoundManager : Singleton<SoundManager>
     [SerializeField] private AudioSource soundeffectSource;
 
 
+    [SerializeField] private AudioClip mainMenuMusic;
+    [SerializeField] private AudioClip gameplayMusic;
+    [SerializeField] private AudioClip winMusic;
+    [SerializeField] private AudioClip gameOverMusic;
+
+    [SerializeField] private AudioClip testSoundEffect;
     protected override void Awake()
     {
         base.Awake();
@@ -21,11 +27,84 @@ public class SoundManager : Singleton<SoundManager>
         }
         soundeffectSource.PlayOneShot(clip);
     }
-    
+
     public void PlayBackgroundMusic(AudioClip clip)
     {
         if (backgroundMusicSource.clip == clip) return;
         backgroundMusicSource.clip = clip;
         backgroundMusicSource.Play();
     }
+
+
+    public void StopBackgroundMusic()
+    {
+        backgroundMusicSource.Stop();
+        backgroundMusicSource.clip = null;
+    }
+
+    public void SetBackgroundMusicVolume(float volume)
+    {
+        backgroundMusicSource.volume = Mathf.Clamp01(volume);
+    }
+
+    public void SetSoundEffectVolume(float volume)
+    {
+        soundeffectSource.volume = Mathf.Clamp01(volume);
+        PlaySoundEffect(testSoundEffect);
+    }
+
+    public float GetBackgroundMusicVolume()
+    {
+        return backgroundMusicSource.volume;
+    }
+    public float GetSoundEffectVolume()
+    {
+        return soundeffectSource.volume;
+    }
+
+    public void MuteBackgroundMusic(bool mute)
+    {
+        backgroundMusicSource.mute = mute;
+    }
+    public void MuteSoundEffects(bool mute)
+    {
+        soundeffectSource.mute = mute;
+    }
+
+    public void PauseBackgroundMusic()
+    {
+        backgroundMusicSource.Pause();
+    }
+    public void UnPauseBackgroundMusic()
+    {
+        backgroundMusicSource.UnPause();
+    }
+
+    public void StopAllSounds()
+    {
+        backgroundMusicSource.Stop();
+        soundeffectSource.Stop();
+    }
+
+    public void PlayMainMenuMusic()
+    {
+        PlayBackgroundMusic(mainMenuMusic);
+    }
+
+    public void PlayGameplayMusic()
+    {
+        PlayBackgroundMusic(gameplayMusic);
+    }
+
+    public void PlayWinMusic()
+    {
+        PlayBackgroundMusic(winMusic);
+    }
+
+    public void PlayGameOverMusic()
+    {
+        PlayBackgroundMusic(gameOverMusic);
+    }
+
+
 }

@@ -28,6 +28,7 @@ public class GameManager : Singleton<GameManager>
     [SerializeField] public int GravesLeft { get; set; } = 0;
 
 
+
     private int scoreAtLevelStart;
     private float timeLeftAtLevelStart;
 
@@ -35,6 +36,11 @@ public class GameManager : Singleton<GameManager>
     public int CurrentScore { get; set; } = 0;
     public string PlayerName { get; set; } = "Player1";
 
+    readonly public string FirstLevelName = "Level_01";
+    readonly public string MainMenuSceneName = "MainMenu";
+    readonly public string GameOverSceneName = "GameOverScene";
+    readonly public string TestSceneName = "TestScene";
+    
 
     override protected void Awake()
     {
@@ -46,15 +52,14 @@ public class GameManager : Singleton<GameManager>
 
     private void Start()
     {
-        if (SceneManager.GetActiveScene().name == "SampleScene")
+        if (SceneManager.GetActiveScene().name == TestSceneName)
         {
-            Debug.Log("GameManager: Starting in Sample scene, going to LevelMenu state");
+            Debug.Log("GameManager: Starting in Test scene, going to LevelMenu state");
             ChangeState(GameState.LevelMenu);
             timeLeft = gameTimeLimit;
             return;
         }
-        Debug.Log("GameManager: Starting in MainMenu state");
-        ChangeState(GameState.MainMenu);
+        GoToMainMenu();
 
     }
 
@@ -100,7 +105,8 @@ public class GameManager : Singleton<GameManager>
     [ContextMenu("Start Game")]
     public void StartGame()
     {
-        SceneManager.LoadScene("Level_01");
+        SceneManager.LoadScene(FirstLevelName);
+        SoundManager.Instance.PlayGameplayMusic();
         ChangeState(GameState.LevelMenu);
         timeLeft = gameTimeLimit;
         CurrentScore = 0;
@@ -113,7 +119,7 @@ public class GameManager : Singleton<GameManager>
         Debug.Log("GameManager: Starting Level " + CurrentLevel);
         scoreAtLevelStart = CurrentScore;
         timeLeftAtLevelStart = timeLeft;
-        ChangeState(GameState.Playing);
+        ChangeState(GameState.Playing); 
     }
 
     [ContextMenu("Restart Current Level")]
@@ -150,16 +156,21 @@ public class GameManager : Singleton<GameManager>
         CurrentLevel = levelIndex;
         SceneManager.LoadScene(levelIndex);
         ChangeState(GameState.LevelMenu);
+        SoundManager.Instance.PlayGameplayMusic();
 
     }
 
-    public void QuitToMenu()
+    public void GoToMainMenu()
     {
         CurrentScore = 0;
         timeLeft = gameTimeLimit;
-        Destroy(PlayerController.Instance.gameObject);
+        if (PlayerController.Instance != null)
+        {
+            Destroy(PlayerController.Instance.gameObject);
+        }
         Debug.Log("GameManager: Quitting to Main Menu");
         ChangeState(GameState.MainMenu);
+        SoundManager.Instance.PlayMainMenuMusic();
     }
 
     public void ExitGame()
@@ -175,6 +186,7 @@ public class GameManager : Singleton<GameManager>
         CurrentScore += Mathf.FloorToInt(timeLeft); // Bonus for remaining time
 
         ChangeState(GameState.Win);
+        SoundManager.Instance.PlayWinMusic();
     }
 
     [ContextMenu("Lose Game")]
@@ -182,6 +194,7 @@ public class GameManager : Singleton<GameManager>
     {
         Debug.Log("GameManager: You Lose!");
         ChangeState(GameState.Lose);
+        SoundManager.Instance.PlayGameOverMusic();
     }
 
     [ContextMenu("End Game")]
@@ -189,6 +202,7 @@ public class GameManager : Singleton<GameManager>
     {
         Debug.Log("GameManager: Game Over");
         ChangeState(GameState.GameOver);
+        SoundManager.Instance.PlayGameOverMusic();
     }
 
     public void ChangeState(GameState newState)
@@ -205,12 +219,12 @@ public class GameManager : Singleton<GameManager>
             case GameState.Win:
             case GameState.Lose:
             case GameState.GameOver:
-                SceneManager.LoadScene("GameOverScene");
+                SceneManager.LoadScene(GameOverSceneName);
                 break;
             case GameState.MainMenu:
-                if (SceneManager.GetActiveScene().name != "MainMenu")
+                if (SceneManager.GetActiveScene().name != MainMenuSceneName)
                 {
-                    SceneManager.LoadScene("MainMenu");
+                    SceneManager.LoadScene(MainMenuSceneName);
                 }
                 break;
             default:

@@ -153,6 +153,11 @@ MonoBehaviour:
   SetDontDestroyOnLoad: 1
   backgroundMusicSource: {fileID: 371331418}
   soundeffectSource: {fileID: 371331417}
+  mainMenuMusic: {fileID: 8300000, guid: 777b24dd7b4f3d048ab98a5f2dcb8919, type: 3}
+  gameplayMusic: {fileID: 8300000, guid: db528b86c1df3ef42bfb549c92b8d213, type: 3}
+  winMusic: {fileID: 8300000, guid: 2c44bdffafe056046b3c2e5bb612f8f6, type: 3}
+  gameOverMusic: {fileID: 8300000, guid: ad2258ac79b418e43890257bebc73d7c, type: 3}
+  testSoundEffect: {fileID: 8300000, guid: 41f0dd5cb6d7031449e77f9cf5b5f9af, type: 3}
 --- !u!82 &371331417
 AudioSource:
   m_ObjectHideFlags: 0
@@ -166,7 +171,7 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.4
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -263,7 +268,7 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.5
   m_Pitch: 1
   Loop: 1
   Mute: 0
@@ -713,6 +718,14 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1215873733510042243, guid: 217d3b2a7d5ba644cbd56202958e21cc, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2736195709597062221, guid: 217d3b2a7d5ba644cbd56202958e21cc, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3702096542483091466, guid: 217d3b2a7d5ba644cbd56202958e21cc, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -743,6 +756,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3835587781323836947, guid: 217d3b2a7d5ba644cbd56202958e21cc, type: 3}
       propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4698916835364743926, guid: 217d3b2a7d5ba644cbd56202958e21cc, type: 3}
+      propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4733942316765975023, guid: 217d3b2a7d5ba644cbd56202958e21cc, type: 3}
@@ -791,6 +808,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5027099082369690815, guid: 217d3b2a7d5ba644cbd56202958e21cc, type: 3}
       propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5109654040491815675, guid: 217d3b2a7d5ba644cbd56202958e21cc, type: 3}
+      propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5394313544299418913, guid: 217d3b2a7d5ba644cbd56202958e21cc, type: 3}
