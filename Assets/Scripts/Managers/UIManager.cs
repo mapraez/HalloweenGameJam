@@ -12,6 +12,8 @@ public class UIManager : Singleton<UIManager>
     [SerializeField] private TextMeshProUGUI gravesLeftText;
 
     [Header("Panels")]
+    [SerializeField] private GameObject staticPanel;
+    [SerializeField] private GameObject introPanel;
     [SerializeField] private GameObject menuPanel;
     [SerializeField] private GameObject levelMenuPanel;
     [SerializeField] private GameObject gamePanel;
@@ -42,6 +44,8 @@ public class UIManager : Singleton<UIManager>
 
     public void ShowPanel(GameState state)
     {
+        staticPanel.SetActive(state != GameState.Intro);
+        introPanel.SetActive(state == GameState.Intro);
         settingsPanel.SetActive(state == GameState.MainMenu || state == GameState.Paused);
 
         menuPanel.SetActive(state == GameState.MainMenu);

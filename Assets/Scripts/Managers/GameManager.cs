@@ -12,7 +12,8 @@ public enum GameState
     Lose,
     GameOver,
     LevelComplete,
-    LevelMenu
+    LevelMenu,
+    Intro
 }
 
 
