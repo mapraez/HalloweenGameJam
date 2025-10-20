@@ -181,6 +181,11 @@ public class PlayerController : Singleton<PlayerController>
             inputActions.Player.Disable();
             rb.isKinematic = true;
         }
+        else
+        {
+            inputActions.Player.Enable();
+            rb.isKinematic = false;
+        }
     }
 
     void OnDestroy()

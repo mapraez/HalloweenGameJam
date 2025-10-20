@@ -35,8 +35,8 @@ public class GameManager : Singleton<GameManager>
 
     private int scoreAtLevelStart;
     private float timeLeftAtLevelStart;
-    private int gravesAtLevelStart;
     private int playerHealthAtLevelStart;
+    private int currentSceneIndex = 0;
 
     private float timeLeft;
     public int CurrentScore { get; set; } = 0;
@@ -127,7 +127,11 @@ public class GameManager : Singleton<GameManager>
         ChangeState(GameState.LevelMenu);
         timeLeft = gameTimeLimit;
         CurrentScore = 0;
-        FinalScore = 0;  
+        targetScore = 100;
+        FinalScore = 0;
+        currentSceneIndex = 0;
+        GravesLeft = 0;
+        CurrentLevel = 1;  
     }
 
 
@@ -135,6 +139,7 @@ public class GameManager : Singleton<GameManager>
     public void StartCurrentLevel()
     {
         Debug.Log("GameManager: Starting Level " + CurrentLevel);
+        currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
         scoreAtLevelStart = CurrentScore;
         timeLeftAtLevelStart = timeLeft;
         playerHealthAtLevelStart = PlayerController.Instance.CurrentHealth;
@@ -164,14 +169,14 @@ public class GameManager : Singleton<GameManager>
         timeLeft = timeLeftAtLevelStart;
         GravesLeft = 0;
         PlayerController.Instance.SetPlayerHealth(playerHealthAtLevelStart);
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        SceneManager.LoadScene(currentSceneIndex);
         ChangeState(GameState.LevelMenu);
+        SoundManager.Instance.PlayGameplayMusic();
     }
 
     [ContextMenu("Force Load Next Level")]
     public void LoadNextLevel()
     {
-        int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
         int nextLevelIndex = currentSceneIndex + 1;
 
         CurrentLevel++;
@@ -203,8 +208,13 @@ public class GameManager : Singleton<GameManager>
 
     public void GoToMainMenu()
     {
-        CurrentScore = 0;
         timeLeft = gameTimeLimit;
+        CurrentScore = 0;
+        targetScore = 100;
+        FinalScore = 0;
+        currentSceneIndex = 0;
+        GravesLeft = 0;
+        CurrentLevel = 1;
         if (PlayerController.Instance != null)
         {
             Destroy(PlayerController.Instance.gameObject);
