@@ -7,6 +7,7 @@ public class UIManager : Singleton<UIManager>
 {
 
     [Header("UI References")]
+    [SerializeField] private TextMeshProUGUI levelNameText;
     [SerializeField] private TextMeshProUGUI timerText;
     [SerializeField] private TextMeshProUGUI scoreText;
     [SerializeField] private TextMeshProUGUI gravesLeftText;
@@ -18,6 +19,7 @@ public class UIManager : Singleton<UIManager>
     [SerializeField] private GameObject levelMenuPanel;
     [SerializeField] private GameObject gamePanel;
     [SerializeField] private GameObject pausePanel;
+    [SerializeField] private GameObject gameInfoPanel;
     [SerializeField] private GameObject levelCompletePanel;
     [SerializeField] private GameObject winPanel;
     [SerializeField] private GameObject losePanel;
@@ -47,6 +49,7 @@ public class UIManager : Singleton<UIManager>
         staticPanel.SetActive(state != GameState.Intro);
         introPanel.SetActive(state == GameState.Intro);
         settingsPanel.SetActive(state == GameState.MainMenu || state == GameState.Paused);
+        gameInfoPanel.SetActive(state == GameState.Paused || state == GameState.LevelMenu);
 
         menuPanel.SetActive(state == GameState.MainMenu);
         levelMenuPanel.SetActive(state == GameState.LevelMenu);
@@ -58,6 +61,10 @@ public class UIManager : Singleton<UIManager>
         gameOverPanel.SetActive(state == GameState.GameOver);
     }
 
+    public void UpdateLevelName(int levelName)
+    {
+        levelNameText.text = "Level: " + levelName.ToString();
+    }
 
     public void UpdateScore(int currentScore, int targetScore)
     {
@@ -72,6 +79,11 @@ public class UIManager : Singleton<UIManager>
     public void UpdateGravesLeft(int gravesLeft)
     {
         gravesLeftText.text = "Graves Left: " + gravesLeft.ToString();
+    }
+
+    public void CallPlayIntroScene()
+    {
+        GameManager.Instance.PlayIntroScene();
     }
 
     public void CallStartGame()
@@ -105,11 +117,12 @@ public class UIManager : Singleton<UIManager>
         GameManager.Instance.ExitGame();
     }
 
-    public void UpdateUI(GameState currentGameState, float timeLeft, int currentScore, int targetScore)
+    public void UpdateUI(GameState currentGameState, float timeLeft, int currentScore, int targetScore, int currentLevel)
     {
         ShowPanel(currentGameState);
         UpdateTimer(timeLeft);
         UpdateScore(currentScore, targetScore);
+        UpdateLevelName(currentLevel);
     }
 
     public void UpdateHealth(int currentHealth, int maxHealth)

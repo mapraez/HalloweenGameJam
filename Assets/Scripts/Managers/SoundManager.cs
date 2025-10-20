@@ -17,7 +17,17 @@ public class SoundManager : Singleton<SoundManager>
     [SerializeField] private AudioClip playerDamagedSoundEffect;
     [SerializeField] private AudioClip playerHealSoundEffect;
 
-    [Header("Test Sound")]
+
+    [Header("Intro Musics")]
+    [SerializeField] private AudioClip introTVDramaMusic;
+    [SerializeField] private AudioClip introGraveyardMusic;
+    [SerializeField] private AudioClip introTVLossMusic;
+    [SerializeField] private AudioClip introFinaleMusic;
+    [SerializeField] private AudioClip explosionSoundEffect;
+    [SerializeField] private AudioClip zombieGrowlSoundEffect;
+
+
+    [Header("Test Sounds")]
     [SerializeField] private AudioClip testSoundEffect;
     protected override void Awake()
     {
@@ -123,4 +133,35 @@ public class SoundManager : Singleton<SoundManager>
         PlaySoundEffect(playerHealSoundEffect);
     }
 
+    public void PlayIntroMusic(int index)
+    {
+        switch (index)
+        {
+            case 0:
+                StopAllSounds();
+                break;
+            case 1:
+                PlayBackgroundMusic(introTVDramaMusic);
+                break;
+            case 2:
+                PlayBackgroundMusic(introGraveyardMusic);
+                break;
+            case 3:
+                PlayBackgroundMusic(introTVLossMusic);
+                break;
+            case 4:
+                PlayBackgroundMusic(introFinaleMusic);
+                break;
+            case 5:
+                PlaySoundEffect(explosionSoundEffect);
+                break;
+            case 6:
+                PlaySoundEffect(zombieGrowlSoundEffect);
+                break;
+            default:
+                Debug.LogWarning("SoundManager: Invalid intro music index: " + index);
+                break;
+        }
+    }
+    
 }

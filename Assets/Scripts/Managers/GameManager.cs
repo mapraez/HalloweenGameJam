@@ -43,8 +43,9 @@ public class GameManager : Singleton<GameManager>
     public int FinalScore { get; set; } = 0;
     public string PlayerName { get; set; } = "Player1";
 
-    readonly public string FirstLevelName = "Level_01";
     readonly public string MainMenuSceneName = "MainMenu";
+    readonly public string IntroSceneName = "IntroScene";
+    readonly public string FirstLevelName = "Level_01";
     readonly public string GameOverSceneName = "GameOverScene";
     readonly public string TestSceneName = "TestScene";
     
@@ -110,6 +111,14 @@ public class GameManager : Singleton<GameManager>
         }
     }
 
+    [ContextMenu("Play Intro Scene")]
+    public void PlayIntroScene()
+    {
+        SoundManager.Instance.StopBackgroundMusic();
+        SceneManager.LoadScene(IntroSceneName);
+        ChangeState(GameState.Intro);
+    }
+
     [ContextMenu("Start Game")]
     public void StartGame()
     {
@@ -118,8 +127,7 @@ public class GameManager : Singleton<GameManager>
         ChangeState(GameState.LevelMenu);
         timeLeft = gameTimeLimit;
         CurrentScore = 0;
-        
-        
+        FinalScore = 0;  
     }
 
 
@@ -130,10 +138,22 @@ public class GameManager : Singleton<GameManager>
         scoreAtLevelStart = CurrentScore;
         timeLeftAtLevelStart = timeLeft;
         playerHealthAtLevelStart = PlayerController.Instance.CurrentHealth;
-        ChangeState(GameState.Playing); 
+        ChangeState(GameState.Playing);
 
         GameObject spawnEffect = Instantiate(playerSpawnEffectPrefab, PlayerController.Instance.transform.position + Vector3.up * .1f, Quaternion.identity);
         Destroy(spawnEffect, 2f); // Destroy the effect after 2 seconds
+    }
+    
+    [ContextMenu("Clear Current Level")]
+    public void ClearCurrentLevel()
+    {
+        Debug.Log("GameManager: Clearing Level " + CurrentLevel);
+        // Implement level clearing logic here
+        Enemy[] enemies = FindObjectsByType<Enemy>(FindObjectsSortMode.None);
+        foreach (Enemy enemy in enemies)
+        {
+            enemy.TakeDamage(9999); // Inflict massive damage to ensure they die
+        }
     }
 
     [ContextMenu("Restart Current Level")]
@@ -148,7 +168,7 @@ public class GameManager : Singleton<GameManager>
         ChangeState(GameState.LevelMenu);
     }
 
-    [ContextMenu("Load Next Level")]
+    [ContextMenu("Force Load Next Level")]
     public void LoadNextLevel()
     {
         int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
@@ -216,7 +236,9 @@ public class GameManager : Singleton<GameManager>
         Debug.Log("GameManager: You Lose!");
         ChangeState(GameState.Lose);
         SoundManager.Instance.PlayGameOverMusic();
+        
     }
+
 
     [ContextMenu("End Game")]
     public void EndGame()
@@ -234,6 +256,9 @@ public class GameManager : Singleton<GameManager>
         Time.timeScale = 0f;
         switch (CurrentGameState)
         {
+            case GameState.Intro:
+                Time.timeScale = 1f;
+                break;
             case GameState.MainMenu:
                 Time.timeScale = 1f;
                 if (SceneManager.GetActiveScene().name != MainMenuSceneName)
@@ -247,6 +272,7 @@ public class GameManager : Singleton<GameManager>
             case GameState.Win:
             case GameState.Lose:
             case GameState.GameOver:
+                Time.timeScale = 1f;
                 UIManager.Instance.ClearGravesText();
                 SceneManager.LoadScene(GameOverSceneName);
                 break;
@@ -254,7 +280,7 @@ public class GameManager : Singleton<GameManager>
             default:
                 break;
         }
-        UIManager.Instance.UpdateUI(CurrentGameState, timeLeft, CurrentScore, targetScore);
+        UIManager.Instance.UpdateUI(CurrentGameState, timeLeft, CurrentScore, targetScore, CurrentLevel);
 
     }
 

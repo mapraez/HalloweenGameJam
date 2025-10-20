@@ -174,6 +174,13 @@ public class PlayerController : Singleton<PlayerController>
             transform.position = Vector3.zero;
             transform.rotation = Quaternion.identity;
         }
+
+        if (scene.name == GameManager.Instance.GameOverSceneName)
+        {
+            lightWeapon?.ToggleLights(false);
+            inputActions.Player.Disable();
+            rb.isKinematic = true;
+        }
     }
 
     void OnDestroy()
